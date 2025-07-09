@@ -1,0 +1,46 @@
+EMPLOYMENT AGREEMENT
+
+This Employment Agreement ("Agreement") is entered into as of January 1, 2025, between TechCorp Solutions Inc., a Delaware corporation ("Company"), and John Doe ("Employee").
+
+1. POSITION AND DUTIES
+Employee shall serve as Senior Software Engineer and shall perform such duties as are customarily associated with such position. Employee shall report directly to the Chief Technology Officer and shall devote their full business time and attention to the performance of their duties.
+
+2. COMPENSATION
+2.1 Base Salary: Employee shall receive an annual base salary of $120,000, payable in accordance with Company's standard payroll practices.
+2.2 Bonus: Employee shall be eligible for an annual performance bonus of up to 20% of base salary, at the sole discretion of the Company.
+2.3 Stock Options: Employee shall be granted options to purchase 10,000 shares of Company common stock, subject to a four-year vesting schedule with a one-year cliff.
+
+3. BENEFITS
+Employee shall be entitled to participate in all employee benefit plans offered by the Company to similarly situated employees, including health insurance, dental, vision, and 401(k) retirement plan. Employee shall accrue 15 days of paid time off per year.
+
+4. TERM AND TERMINATION
+4.1 At-Will Employment: This is at-will employment and may be terminated by either party at any time, with or without cause or notice.
+4.2 Severance: In the event of termination without cause, Employee shall receive two weeks of severance pay.
+4.3 Forfeiture: All unvested stock options shall be immediately forfeited upon termination for any reason.
+
+5. CONFIDENTIALITY AND INTELLECTUAL PROPERTY
+5.1 Confidential Information: Employee agrees not to disclose any confidential information of the Company during or after employment.
+5.2 Work Product: All work product, inventions, and intellectual property created by Employee during employment shall be the sole property of the Company.
+5.3 Non-Disclosure Period: The confidentiality obligations shall survive termination of employment indefinitely.
+
+6. NON-COMPETITION AND NON-SOLICITATION
+6.1 Non-Competition: For a period of two (2) years following termination, Employee shall not engage in any business that competes with the Company within the United States.
+6.2 Non-Solicitation: Employee shall not solicit any Company employees or customers for a period of two (2) years following termination.
+6.3 Geographic Scope: These restrictions apply nationwide regardless of where Employee performed their duties.
+
+7. DISPUTE RESOLUTION
+7.1 Arbitration: Any disputes arising under this Agreement shall be resolved through binding arbitration under JAMS rules, with the arbitration to take place in Delaware.
+7.2 Costs: Each party shall bear their own attorney's fees and costs, regardless of the outcome.
+7.3 Waiver of Rights: Employee waives any right to a jury trial or to participate in class action lawsuits against the Company.
+
+8. GENERAL PROVISIONS
+8.1 Entire Agreement: This Agreement constitutes the entire agreement between the parties and supersedes all prior negotiations, representations, or agreements.
+8.2 Modification: This Agreement may only be modified by the Company in its sole discretion with 30 days notice to Employee.
+8.3 Governing Law: This Agreement shall be governed by Delaware law, without regard to conflict of law principles.
+
+By signing below, the parties acknowledge that they have read, understood, and agree to be bound by the terms of this Agreement.
+
+COMPANY:                           EMPLOYEE:
+_____________________             _____________________
+TechCorp Solutions Inc.           John Doe
+Date: _______________             Date: _______________
