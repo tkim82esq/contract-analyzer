@@ -5,115 +5,19 @@
    ▲ Next.js 15.3.5 (Turbopack)
    - Local:        http://localhost:3000
    - Network:      http://192.168.0.25:3000
-   - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 871ms
+ ✓ Ready in 863ms
  ○ Compiling / ...
- ✓ Compiled / in 1823ms
- GET / 200 in 2003ms
- GET / 200 in 197ms
- ✓ Compiled /favicon.ico in 337ms
- GET /favicon.ico?favicon.45db1c09.ico 200 in 600ms
+ ✓ Compiled / in 1720ms
+ GET / 200 in 1933ms
  ○ Compiling /api/analyze ...
- ✓ Compiled /api/analyze in 1371ms
-Processing file: 2025.6.12_nda_busan x trident [draft].docx, type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
-Successfully extracted 8687 characters from Word document
-Extracted 8385 characters from 2025.6.12_NDA_Busan x Trident [DRAFT].docx
-Trying model: claude-3-5-sonnet-20241022
-Success with model: claude-3-5-sonnet-20241022
- POST /api/analyze 200 in 19277ms
- ✓ Compiled /api/analyze-clauses in 298ms
-Failed to parse clause analysis: I apologize, but I notice that the contract text appears to be corrupted or contains binary/encoded content (starting with "PK F��Z" and containing many non-readable characters). This appears to be a Word document in its raw binary form rather than plain text.
-
-To properly analyze an NDA, I would need the actual readable text of the agreement. The current format contains file structure information and encoded content rather than the legal language of the NDA.
-
-If you could provide the actual text content of the NDA, I would be happy to:
-
-1. Break it down clause by clause
-2. Analyze each section from the Disclosing Party's perspective
-3. Identify specific risks
-4. Provide the analysis in the requested JSON format
-5. Focus on the 8-12 most critical clauses
-
-Please share the readable text version of the NDA and I will provide a detailed analysis in the format you specified.
-Clause analysis error: Error: Failed to parse clause analysis
-    at analyzeContractClauses (src/lib/ai-analyzer.ts:333:12)
-    at async POST (src/app/api/analyze-clauses/route.ts:55:22)
-  331 |     } catch (parseError) {
-  332 |       console.error('Failed to parse clause analysis:', content.text);
-> 333 |       throw new Error('Failed to parse clause analysis');
-      |            ^
-  334 |     }
-  335 |
-  336 |     // Process clauses
-AI clause analysis failed: Error: Failed to parse clause analysis
-    at analyzeContractClauses (src/lib/ai-analyzer.ts:333:12)
-    at async POST (src/app/api/analyze-clauses/route.ts:55:22)
-  331 |     } catch (parseError) {
-  332 |       console.error('Failed to parse clause analysis:', content.text);
-> 333 |       throw new Error('Failed to parse clause analysis');
-      |            ^
-  334 |     }
-  335 |
-  336 |     // Process clauses
- POST /api/analyze-clauses 500 in 9141ms
- ✓ Compiled in 299ms
-Clause analysis request: {
-  contractTextLength: 210744,
-  contractTextPreview: 'PK\x03\x04\x14\x00\b\b\b\x00F��Z\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x12\x00\x00\x00word/numbering.xml�Xێ�0\x10���C����@\b�FK����Z����~�c\x1C��\x0B�M.\x7F_\x03�\\��\x14�ē�\x19�\x19\x1Fs����i��`��"�\x07�3��\x01�H��G����e8�\x06JC\x1EB*8\x0E�=V�����v�S����\x1B\x18\b��\f\x05V�u2\x07@�\x183�F"��$WB2��W\x19\x01\x06�:M�H�\x04j�$��=p',
-  contractType: 'NDA',
-  partyRole: 'Disclosing Party'
-}
-Failed to parse clause analysis: I apologize, but I notice that the contract text appears to be corrupted or contains binary/encoded content rather than readable NDA text. I can see binary/hex content and file structure information rather than actual contract clauses.
-
-To properly analyze an NDA, I would need the actual readable text of the agreement. A typical NDA usually contains key sections like:
-
-1. Definition of Confidential Information
-2. Scope of Confidentiality
-3. Exclusions from Confidential Information 
-4. Term and Duration
-5. Return of Materials
-6. Non-Disclosure Obligations
-7. Permitted Disclosures
-8. Remedies
-9. Survival
-10. General Terms
-
-If you could provide the actual readable text of the NDA, I would be happy to analyze each clause in the requested JSON format, focusing specifically on risks and implications for the Disclosing Party.
-
-Would you please share the actual text content of the NDA rather than the encoded/binary version? That way I can provide a proper clause-by-clause analysis with meaningful risk assessment.
-Clause analysis error: Error: Failed to parse clause analysis
-    at analyzeContractClauses (src/lib/ai-analyzer.ts:333:12)
-    at async POST (src/app/api/analyze-clauses/route.ts:62:22)
-  331 |     } catch (parseError) {
-  332 |       console.error('Failed to parse clause analysis:', content.text);
-> 333 |       throw new Error('Failed to parse clause analysis');
-      |            ^
-  334 |     }
-  335 |
-  336 |     // Process clauses
-AI clause analysis failed: Error: Failed to parse clause analysis
-    at analyzeContractClauses (src/lib/ai-analyzer.ts:333:12)
-    at async POST (src/app/api/analyze-clauses/route.ts:62:22)
-  331 |     } catch (parseError) {
-  332 |       console.error('Failed to parse clause analysis:', content.text);
-> 333 |       throw new Error('Failed to parse clause analysis');
-      |            ^
-  334 |     }
-  335 |
-  336 |     // Process clauses
- POST /api/analyze-clauses 500 in 7267ms
-Processing file: 2025.6.12_nda_busan x trident [draft].docx, type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
-Successfully extracted 8687 characters from Word document
-Extracted 8385 characters from 2025.6.12_NDA_Busan x Trident [DRAFT].docx
-Trying model: claude-3-5-sonnet-20241022
-Success with model: claude-3-5-sonnet-20241022
- POST /api/analyze 200 in 16064ms
-Clause analysis request: {
-  contractTextLength: 8385,
-  contractTextPreview: 'MUTUAL NON-DISCLOSURE AGREEMENT This Mutual Non-Disclosure Agreement (“Agreement”) is made and entered into as of [DATE] (“Effective Date”), by and between: Busan Metropolitan City, a municipality of ',
-  contractType: 'NDA',
-  partyRole: 'Disclosing Party'
-}
- POST /api/analyze-clauses 200 in 18624ms
+ ✓ Compiled /api/analyze in 1734ms
+Processing file: test-contract.txt, type: text/plain
+Extracted 3552 characters from test-contract.txt
+No Anthropic API key found, using mock analysis
+ POST /api/analyze 200 in 2219ms
+Processing file: test-contract.txt, type: text/plain
+Extracted 3552 characters from test-contract.txt
+No Anthropic API key found, using mock analysis
+ POST /api/analyze 200 in 325ms

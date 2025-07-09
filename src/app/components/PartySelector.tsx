@@ -50,6 +50,46 @@ const CONTRACT_TYPES = [
   {
     name: 'Offer Letter',
     parties: ['Candidate', 'Company']
+  },
+  {
+    name: 'Software as a Service (SaaS) Agreement',
+    parties: ['Customer', 'Provider']
+  },
+  {
+    name: 'Software Licensing Agreement',
+    parties: ['Licensee', 'Licensor']
+  },
+  {
+    name: 'End User License Agreement (EULA)',
+    parties: ['End User', 'Licensor']
+  },
+  {
+    name: 'Terms of Service',
+    parties: ['User', 'Service Provider']
+  },
+  {
+    name: 'Privacy Policy',
+    parties: ['Data Subject', 'Data Controller']
+  },
+  {
+    name: 'Data Processing Agreement (DPA)',
+    parties: ['Data Controller', 'Data Processor']
+  },
+  {
+    name: 'Cloud Services Agreement',
+    parties: ['Customer', 'Cloud Provider']
+  },
+  {
+    name: 'API Usage Agreement',
+    parties: ['API User/Developer', 'API Provider']
+  },
+  {
+    name: 'Website/Mobile App Development Agreement',
+    parties: ['Client', 'Developer']
+  },
+  {
+    name: 'Software Maintenance and Support Agreement',
+    parties: ['Customer', 'Service Provider']
   }
 ];
 
