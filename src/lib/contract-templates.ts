@@ -2,17 +2,31 @@
 
 export interface ContractTemplate {
   contractType: string;
+  aliases?: string[];
+  keyIdentifyingTerms?: string[];
+  industryVariations?: string[];
   keyReviewPoints: ReviewPoint[];
   redFlags: RedFlag[];
   partySpecificConcerns: {
     [partyRole: string]: string[];
   };
   criticalClauses: string[];
+  essentialClauses: string[];
+  clauseGuidance: {
+    [clauseName: string]: string;
+  };
   advancedComplianceNotes?: {
     multiJurisdictionalConsiderations: string[];
     federalRegulatoryOverlay: string[];
     industrySpecificRequirements: string[];
   };
+}
+
+export interface TemplateMatch {
+  template: ContractTemplate;
+  matchType: 'exact' | 'alias' | 'fuzzy' | 'terms';
+  score: number;
+  matchedOn?: string;
 }
 
 export interface ReviewPoint {
@@ -27,11 +41,44 @@ export interface RedFlag {
   severity: 'high' | 'medium' | 'low';
   explanation: string;
   affectedParty: string | 'both';
+  riskScenario?: string;
+  industryContext?: string;
+  typicalImpactRange?: string;
+  whyAsymmetric?: string;
 }
 
 export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
   'Employment Agreement': {
     contractType: 'Employment Agreement',
+    aliases: [
+      'Employment Contract',
+      'Job Agreement',
+      'Work Agreement',
+      'Employee Contract',
+      'Employment Terms',
+      'Employment Offer',
+      'Position Agreement'
+    ],
+    keyIdentifyingTerms: [
+      'employee',
+      'employer',
+      'employment',
+      'salary',
+      'wages',
+      'benefits',
+      'at-will',
+      'termination',
+      'job duties',
+      'work schedule',
+      'reporting manager'
+    ],
+    industryVariations: [
+      'Executive Employment Agreement',
+      'Sales Employment Agreement',
+      'Tech Employment Agreement',
+      'Healthcare Employment Agreement',
+      'Government Employment Agreement'
+    ],
     keyReviewPoints: [
       {
         category: 'At-Will Employment Status & Termination Rights',
@@ -179,7 +226,11 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
         pattern: 'for any reason.*sole discretion|without cause.*forfeiture|discretionary.*bonus',
         severity: 'high',
         explanation: 'Unlimited employer discretion undermines compensation security and may violate wage payment laws',
-        affectedParty: 'Employee'
+        affectedParty: 'Employee',
+        riskScenario: 'Employer can terminate and forfeit compensation at any time without cause',
+        industryContext: 'Most employment contracts provide specific termination procedures and compensation protection',
+        typicalImpactRange: 'Loss of expected compensation and benefits',
+        whyAsymmetric: 'Only employer has discretionary power, employee has no reciprocal rights'
       },
       {
         pattern: 'worldwide.*non-compete|indefinite.*period|any.*competitive.*business',
@@ -262,6 +313,38 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Representations and Warranties',
       'Choice of Law and Venue'
     ],
+    essentialClauses: [
+      'Parties & Capacity',
+      'Term & Renewal',
+      'Warranties & Representations',
+      'Confidentiality/NDA',
+      'IP Ownership',
+      'Compliance with Laws',
+      'Termination Rights',
+      'Effects of Termination',
+      'Dispute Resolution',
+      'Assignment',
+      'Notices',
+      'Entire Agreement',
+      'Amendment & Waiver',
+      'Severability'
+    ],
+    clauseGuidance: {
+      'Parties & Capacity': 'Identify employee and employer with full legal names, addresses, and capacity to enter agreement. Include authorization statements for corporate entities.',
+      'Term & Renewal': 'Specify employment start date, any probationary period (typically 90 days), and clarify at-will nature. Include automatic conversion provisions.',
+      'Warranties & Representations': 'Employee warrants legal capacity, no conflicting obligations, authorization to work in jurisdiction, and accuracy of representations.',
+      'Confidentiality/NDA': 'Define confidential information broadly but with standard exclusions (public, independently developed, lawfully received). Include return of materials provisions.',
+      'IP Ownership': 'Present assignment of work-related inventions with state law compliance (California Labor Code 2870). Include prior invention disclosure schedule.',
+      'Compliance with Laws': 'Reference applicable employment laws, immigration requirements, professional licensing, and industry-specific regulations.',
+      'Termination Rights': 'Define at-will termination rights, cause definitions, notice requirements, and resignation procedures. Include cure periods where appropriate.',
+      'Effects of Termination': 'Specify final pay timing, benefits continuation (COBRA), return of property, and survival of key provisions (confidentiality, IP).',
+      'Dispute Resolution': 'Include arbitration clauses with cost-sharing, discovery rights, and carve-outs for injunctive relief. Preserve agency filing rights.',
+      'Assignment': 'Restrict employee assignment while allowing employer assignment to affiliates. Include change of control provisions.',
+      'Notices': 'Specify delivery methods (email acceptable), addresses for service, and deemed receipt timing.',
+      'Entire Agreement': 'Supersede prior negotiations while preserving employee handbook, stock plans, and benefit programs by reference.',
+      'Amendment & Waiver': 'Require written modifications signed by both parties. Specify that handbook changes do not modify agreement.',
+      'Severability': 'Include blue pencil provisions for restrictive covenants and general severability for other provisions.'
+    },
     advancedComplianceNotes: {
       multiJurisdictionalConsiderations: [
         'California: Prohibits most non-competes; specific invention assignment rules',
@@ -288,6 +371,36 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
 
   'Service Agreement': {
     contractType: 'Service Agreement',
+    aliases: [
+      'Services Agreement',
+      'Professional Services Agreement',
+      'Service Contract',
+      'Services Contract',
+      'Consulting Agreement',
+      'Service Provider Agreement',
+      'Work Order',
+      'Statement of Work'
+    ],
+    keyIdentifyingTerms: [
+      'services',
+      'service provider',
+      'client',
+      'deliverables',
+      'scope of work',
+      'service level',
+      'performance standards',
+      'service fee',
+      'payment terms',
+      'project',
+      'consulting'
+    ],
+    industryVariations: [
+      'IT Services Agreement',
+      'Marketing Services Agreement',
+      'Legal Services Agreement',
+      'Financial Services Agreement',
+      'Maintenance Services Agreement'
+    ],
     keyReviewPoints: [
       {
         category: 'Service Level Agreements (SLAs)',
@@ -401,7 +514,55 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Liability and Indemnification',
       'Data Security',
       'Termination Rights'
-    ]
+    ],
+    essentialClauses: [
+      'Parties & Capacity',
+      'Scope of Work / Deliverables',
+      'Term & Renewal',
+      'Pricing & Payment',
+      'Change Control',
+      'Warranties & Representations',
+      'Indemnification',
+      'Limitation of Liability',
+      'Insurance',
+      'Confidentiality',
+      'IP Ownership & License',
+      'Data Protection & Privacy',
+      'Service Level Agreement',
+      'Compliance with Laws',
+      'Audit Rights',
+      'Termination Rights',
+      'Effects of Termination',
+      'Dispute Resolution',
+      'Force Majeure',
+      'Assignment',
+      'Notices',
+      'Entire Agreement'
+    ],
+    clauseGuidance: {
+      'Parties & Capacity': 'Identify service provider and client with full legal names, addresses, business registration details, and authority to enter agreement. Include authorized signatory information.',
+      'Scope of Work / Deliverables': 'Define specific services, deliverables, acceptance criteria, dependencies, and exclusions. Include detailed specifications, milestones, and success metrics.',
+      'Term & Renewal': 'Specify initial term, renewal options (automatic vs manual), notice periods for non-renewal (typically 30-90 days), and termination dates.',
+      'Pricing & Payment': 'Include rate cards, invoicing schedule (NET 30 standard), late payment interest (1.5% monthly typical), expense reimbursement policy, and audit rights for time & materials contracts.',
+      'Change Control': 'Establish formal change request process, approval authority, impact assessment procedures, and pricing for scope changes. Include timeline for change order responses.',
+      'Warranties & Representations': 'Service provider warrants professional standards, compliance with laws, authority to provide services, and deliverable quality. Include fitness for purpose warranties.',
+      'Indemnification': 'Mutual indemnification for third-party claims with carve-outs for gross negligence, willful misconduct, and IP infringement. Include defense obligations and notice requirements.',
+      'Limitation of Liability': 'Cap total liability at contract value (12 months for ongoing services), exclude consequential damages, and include material breach exceptions. Consider insurance coverage limits.',
+      'Insurance': 'Require professional liability ($1M typical), general liability ($2M typical), cyber liability ($5M for data handling), and workers compensation. Include additional insured and waiver of subrogation.',
+      'Confidentiality': 'Define confidential information broadly with standard exclusions, include return/destruction obligations, specify survival period (3-5 years), and employee/contractor flow-down requirements.',
+      'IP Ownership & License': 'Clarify ownership of deliverables, pre-existing IP, derivative works, and modifications. Grant necessary licenses for use. Include moral rights waivers where applicable.',
+      'Data Protection & Privacy': 'Specify controller/processor roles, security standards (SOC2, ISO27001), breach notification (within 72 hours), data retention/deletion, and sub-processor restrictions per GDPR/CCPA.',
+      'Service Level Agreement': 'Define uptime targets (99.9% typical), response times by severity, resolution times, service credits for failures (5-25% monthly fees), and measurement methodology with monitoring tools.',
+      'Compliance with Laws': 'Reference applicable regulations (SOX, HIPAA, PCI-DSS), export controls, data protection laws, and industry standards. Include audit cooperation and compliance certification.',
+      'Audit Rights': 'Allow reasonable audit of performance, security, and compliance (annually, 30-day notice, business hours, confidentiality). Include audit cost allocation and remediation timelines.',
+      'Termination Rights': 'Define termination for cause (material breach, insolvency) and convenience with appropriate notice periods. Include immediate termination rights for security breaches.',
+      'Effects of Termination': 'Specify data return/deletion, transition assistance period, final invoicing, survival of key provisions, and handover procedures. Include post-termination cooperation.',
+      'Dispute Resolution': 'Include escalation procedures (project manager, executive level), mediation requirements, and arbitration with expedited procedures for service level disputes.',
+      'Force Majeure': 'Cover unforeseeable events preventing performance with notice requirements, mitigation obligations, and termination rights for extended delays (90+ days typical).',
+      'Assignment': 'Restrict assignment without consent, allow assignment to affiliates or in connection with business transfers, and include change of control provisions.',
+      'Notices': 'Specify delivery methods (email acceptable for routine notices), addresses, and deemed receipt timing. Include emergency contact procedures.',
+      'Entire Agreement': 'Supersede prior agreements while preserving referenced statements of work, exhibits, and order forms. Include integration clause and amendment procedures.'
+    }
   },
 
   'Consulting Agreement': {
@@ -656,12 +817,85 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
         'Financial Services: FINRA registration, U4/U5 considerations',
         'Technology: Export control, open source policies',
         'Government Contractors: Security clearances, compliance requirements'
-      ]
+      ],
+    essentialClauses: [
+      'Parties & Capacity',
+      'Relationship of Parties',
+      'Scope of Work / Deliverables',
+      'Term & Renewal',
+      'Pricing & Payment',
+      'Change Control',
+      'Warranties & Representations',
+      'Indemnification',
+      'Limitation of Liability',
+      'Insurance',
+      'Confidentiality/NDA',
+      'IP Ownership',
+      'Compliance with Laws',
+      'Termination Rights',
+      'Effects of Termination',
+      'Dispute Resolution',
+      'Assignment',
+      'Notices',
+      'Entire Agreement',
+      'Severability'
+    ],
+    clauseGuidance: {
+      'Parties & Capacity': 'Identify client and consultant with business names, addresses, and tax ID numbers. Emphasize consultant\'s independent business status.',
+      'Relationship of Parties': 'Explicitly state independent contractor relationship, no employment created, consultant controls methods and means, and can work for others.',
+      'Scope of Work / Deliverables': 'Define specific project deliverables with objective acceptance criteria, avoid ongoing operational duties, and preserve consultant\'s independence.',
+      'Term & Renewal': 'Use project-based terms, avoid evergreen clauses, and include clear end dates to prevent indefinite relationship.',
+      'Pricing & Payment': 'Use project/milestone-based payment, avoid benefits, allow consultant invoicing processes, and specify NET 30 payment terms.',
+      'Change Control': 'Establish formal change request process with consultant approval, impact assessment, and additional compensation for scope changes.',
+      'Warranties & Representations': 'Consultant warrants independent business operation, proper licensing, compliance with tax obligations, and professional standards.',
+      'Indemnification': 'Mutual indemnification with consultant indemnifying for classification issues, tax liabilities, and subcontractor acts.',
+      'Limitation of Liability': 'Cap total liability at project value, exclude consequential damages, include exceptions for indemnification.',
+      'Insurance': 'Require consultant professional liability, general liability, and workers compensation. Include additional insured status.',
+      'Confidentiality/NDA': 'Protect confidential information with standard exceptions, return obligations, and flow-down to subcontractors.',
+      'IP Ownership': 'Clarify work product ownership while preserving consultant\'s pre-existing IP, methodologies, and tools.',
+      'Compliance with Laws': 'Reference contractor classification laws, tax obligations, licensing requirements. Avoid employee policy requirements.',
+      'Termination Rights': 'Allow termination by either party with notice, include immediate termination for breach, avoid employment-like procedures.',
+      'Effects of Termination': 'Specify work completion, final payment, return of confidential information, and survival of key provisions.',
+      'Dispute Resolution': 'Include business-to-business arbitration, preserve injunctive relief rights, and specify jurisdiction.',
+      'Assignment': 'Allow consultant subcontractors with approval, restrict client assignment without consent.',
+      'Notices': 'Specify business addresses, accept email for routine communications, include urgent matter procedures.',
+      'Entire Agreement': 'Integrate project terms, preserve statements of work, supersede employment discussions.',
+      'Severability': 'Include blue pencil provisions and general severability to preserve independent contractor relationship.'
     }
   },
 
   'SaaS Agreement': {
     contractType: 'SaaS Agreement',
+    aliases: [
+      'Software as a Service Agreement',
+      'SaaS Contract',
+      'Cloud Software Agreement',
+      'Subscription Software Agreement',
+      'Software Subscription Agreement',
+      'Cloud Service Agreement',
+      'Software Platform Agreement'
+    ],
+    keyIdentifyingTerms: [
+      'saas',
+      'software as a service',
+      'subscription',
+      'cloud',
+      'platform',
+      'user access',
+      'uptime',
+      'service level',
+      'monthly fee',
+      'annual subscription',
+      'data hosting'
+    ],
+    industryVariations: [
+      'Enterprise SaaS Agreement',
+      'B2B SaaS Agreement',
+      'CRM SaaS Agreement',
+      'ERP SaaS Agreement',
+      'Marketing SaaS Agreement',
+      'HR SaaS Agreement'
+    ],
     keyReviewPoints: [
       {
         category: 'Service Availability',
@@ -733,25 +967,41 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
         pattern: 'change.*pricing.*any time',
         severity: 'high',
         explanation: 'No budget predictability',
-        affectedParty: 'Client'
+        affectedParty: 'Client',
+        riskScenario: 'Vendor suddenly increases pricing by 50-200% with immediate effect, forcing business to either absorb massive cost increases or undergo disruptive software migration mid-year.',
+        industryContext: 'SaaS pricing disputes are common with annual increases averaging 15-30%, but unlimited pricing power can destroy business economics. Notable cases include Mailchimp (60% increase), Zoom (400% for some tiers).',
+        typicalImpactRange: 'Budget overruns of $50K-$500K annually for mid-market companies; emergency migration costs of $100K-$1M+ including data export, new system setup, staff retraining, and business disruption.',
+        whyAsymmetric: 'Clients invest heavily in integration, training, and workflow dependence making switching costs prohibitive, while vendors can change pricing at will without reciprocal client rights.'
       },
       {
         pattern: 'no backup.*disaster',
         severity: 'high',
         explanation: 'Risk of permanent data loss',
-        affectedParty: 'Client'
+        affectedParty: 'Client',
+        riskScenario: 'Vendor suffers major outage or goes out of business without adequate backup/recovery systems, resulting in complete loss of years of critical business data including customer records, financial data, and intellectual property.',
+        industryContext: 'Cloud failures have caused permanent data loss at companies like Code Spaces (entire business destroyed), GitLab (production data deleted), and Facebooks 6-hour global outage in 2021.',
+        typicalImpactRange: 'Complete business shutdown for 1-7 days ($50K-$1M+ daily revenue loss); permanent data loss requiring 6-18 months of reconstruction at costs of $200K-$5M+ depending on business size.',
+        whyAsymmetric: 'Clients depend entirely on vendor data integrity while vendors often disclaim all liability for data loss, creating massive risk transfer from vendor to client.'
       },
       {
         pattern: 'vendor.*owns.*data',
         severity: 'high',
         explanation: 'Loss of critical business data control',
-        affectedParty: 'Client'
+        affectedParty: 'Client',
+        riskScenario: 'Upon contract termination or dispute, vendor claims ownership of all customer data, business insights, and analytics, preventing data export and forcing complete business restart with competitive intelligence lost.',
+        industryContext: 'Data ownership disputes plague SaaS relationships, with vendors increasingly claiming derivative rights to customer data for AI training, business intelligence, and competitive analysis.',
+        typicalImpactRange: 'Loss of business-critical data worth $500K-$10M+; customer relationship data, sales pipeline, and operational insights that took years to build become vendor property.',
+        whyAsymmetric: 'Clients generate and input all valuable data while vendors provide only the software platform, yet vendors can claim ownership of the valuable data assets clients created.'
       },
       {
         pattern: 'terminate.*immediately.*convenience',
         severity: 'medium',
         explanation: 'Service can disappear without warning',
-        affectedParty: 'Client'
+        affectedParty: 'Client',
+        riskScenario: 'Vendor terminates contract with immediate effect, cutting off access to mission-critical systems during peak business periods, leaving company unable to serve customers, process payments, or access essential data.',
+        industryContext: 'Immediate termination clauses are common in SaaS but can be devastating when vendors exercise them for business disputes, non-payment issues, or strategic reasons during critical business periods.',
+        typicalImpactRange: 'Business disruption costs of $10K-$100K+ per day; lost sales during transition period; emergency migration costs of $50K-$500K; potential customer defection and reputation damage.',
+        whyAsymmetric: 'Vendors can terminate instantly with minimal impact while clients need 30-90 days to migrate data, retrain staff, and transition business processes to new systems.'
       }
     ],
     partySpecificConcerns: {
@@ -775,11 +1025,82 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Pricing and Payment',
       'Acceptable Use Policy',
       'Termination and Transition'
-    ]
+    ],
+    essentialClauses: [
+      'Parties & Capacity',
+      'Scope of Work / Deliverables',
+      'Term & Renewal',
+      'Pricing & Payment',
+      'Warranties & Representations',
+      'Limitation of Liability',
+      'Confidentiality/NDA',
+      'IP License',
+      'Data Protection & Privacy',
+      'Service Level Agreement',
+      'Compliance with Laws',
+      'Termination Rights',
+      'Effects of Termination',
+      'Dispute Resolution',
+      'Assignment',
+      'Notices',
+      'Entire Agreement',
+      'Amendment & Waiver',
+      'Severability'
+    ],
+    clauseGuidance: {
+      'Parties & Capacity': 'Identify SaaS provider and customer with full business details, authorized users count, and contracting authority. Include entity verification for enterprise customers.',
+      'Scope of Work / Deliverables': 'Define SaaS platform features, service levels, user access rights, data processing scope, and any professional services included. Specify what is NOT included.',
+      'Term & Renewal': 'Specify subscription term with auto-renewal clauses (30-60 day notice to opt-out), trial periods, and migration timelines. Include price change notice requirements for renewals.',
+      'Pricing & Payment': 'Detail subscription fees, usage-based charges, payment terms (annual upfront typical), late fees, taxes, and automatic price increases. Include detailed billing and invoicing procedures.',
+      'Warranties & Representations': 'Provider warrants service functionality, uptime commitments, security measures, and compliance certifications. Customer warrants data accuracy and usage compliance.',
+      'Limitation of Liability': 'Cap provider liability at subscription fees paid (12 months typical), exclude consequential damages, include exceptions for data breaches and IP infringement. Consider cyber insurance requirements.',
+      'Confidentiality/NDA': 'Protect customer data and business information with standard exceptions, specify data encryption, include employee confidentiality requirements, and data breach protocols.',
+      'IP License': 'Grant customer limited license to use SaaS platform, clarify no ownership transfer, specify permitted uses, restriction on reverse engineering, and customer data ownership retention.',
+      'Data Protection & Privacy': 'Specify data controller/processor roles per GDPR/CCPA, data security standards (SOC2 Type II, ISO27001), breach notification (72 hours), data portability rights, and deletion procedures.',
+      'Service Level Agreement': 'Define uptime commitments (99.9% typical), response times by severity (1-4 hour response for critical), resolution targets, service credits (5-25% monthly fees), and measurement exclusions.',
+      'Compliance with Laws': 'Reference applicable regulations (GDPR, CCPA, HIPAA, SOX), audit cooperation requirements, certification maintenance, and regulatory change notification procedures.',
+      'Termination Rights': 'Define termination for cause (material breach, non-payment) and convenience with appropriate notice. Include immediate termination for security violations or acceptable use violations.',
+      'Effects of Termination': 'Specify data export rights (90 days typical), data deletion timelines, final billing procedures, survival of confidentiality and limitation clauses, and transition assistance.',
+      'Dispute Resolution': 'Include escalation procedures, mediation requirements, and arbitration with expedited procedures for service disruptions. Preserve right to injunctive relief for IP and data issues.',
+      'Assignment': 'Restrict customer assignment without consent, allow provider assignment to affiliates or acquirers, and include change of control notification requirements.',
+      'Notices': 'Specify delivery methods for different notice types (email for routine, certified mail for termination), emergency contact procedures, and system notification protocols.',
+      'Entire Agreement': 'Supersede prior negotiations while preserving order forms, statements of work, and data processing addenda. Include integration with acceptable use policies.',
+      'Amendment & Waiver': 'Require written modifications, specify that platform updates do not require consent, and preserve provider\'s right to modify terms with advance notice (30-90 days).',
+      'Severability': 'Include provisions to preserve the overall agreement if portions are unenforceable, with specific protection for core commercial terms and data protection obligations.'
+    }
   },
 
   'NDA': {
     contractType: 'NDA',
+    aliases: [
+      'Non-Disclosure Agreement',
+      'Confidentiality Agreement',
+      'Secrecy Agreement',
+      'Non-Disclosure Contract',
+      'Confidentiality Contract',
+      'Information Protection Agreement',
+      'Trade Secret Agreement'
+    ],
+    keyIdentifyingTerms: [
+      'confidential',
+      'confidentiality',
+      'non-disclosure',
+      'proprietary',
+      'trade secret',
+      'disclosure',
+      'receiving party',
+      'disclosing party',
+      'confidential information',
+      'proprietary information'
+    ],
+    industryVariations: [
+      'Technology NDA',
+      'Employment NDA',
+      'Mutual NDA',
+      'One-Way NDA',
+      'Investment NDA',
+      'Vendor NDA'
+    ],
     keyReviewPoints: [
       {
         category: 'Definition of Confidential Information',
@@ -871,7 +1192,29 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Term and Termination',
       'Return of Information',
       'Remedies'
-    ]
+    ],
+    essentialClauses: [
+      'Parties & Capacity',
+      'Term & Renewal',
+      'Confidentiality/NDA',
+      'IP License',
+      'Dispute Resolution',
+      'Governing Law',
+      'Notices',
+      'Entire Agreement',
+      'Severability'
+    ],
+    clauseGuidance: {
+      'Parties & Capacity': 'Identify disclosing and receiving parties with full legal names and authority. Clarify if mutual or one-way disclosure arrangement.',
+      'Term & Renewal': 'Specify effective date, duration of disclosure period, and survival period for confidentiality obligations (typically 3-5 years). Include automatic extension provisions if needed.',
+      'Confidentiality/NDA': 'Define confidential information broadly but precisely, include standard exceptions (publicly available, independently developed, lawfully received), specify use restrictions limited to evaluation purposes, and include employee/contractor flow-down obligations.',
+      'IP License': 'Clarify that no IP rights are granted beyond evaluation purposes. Specify that disclosure does not grant licenses to patents, trademarks, or copyrights.',
+      'Dispute Resolution': 'Include jurisdiction selection, governing law, and provisions for injunctive relief given irreparable harm nature of breaches. Consider expedited arbitration for disputes.',
+      'Governing Law': 'Select favorable jurisdiction with established trade secret law. Consider where parties are located and where confidential information will be used.',
+      'Notices': 'Specify delivery methods for notices, addresses, and deemed receipt timing. Include emergency contact for breach situations.',
+      'Entire Agreement': 'Supersede prior confidentiality discussions while preserving relationship with other agreements (service agreements, etc.). Include integration clause.',
+      'Severability': 'Include blue pencil provisions for overly broad confidentiality terms and general severability to preserve agreement if portions are unenforceable.'
+    }
   },
 
   'Independent Contractor Agreement': {
@@ -1075,7 +1418,49 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Notice and Communication',
       'Survival Provisions',
       'Entire Agreement/Amendment'
-    ]
+    ],
+    essentialClauses: [
+      'Parties & Capacity',
+      'Relationship of Parties',
+      'Scope of Work / Deliverables',
+      'Term & Renewal',
+      'Pricing & Payment',
+      'Warranties & Representations',
+      'Indemnification',
+      'Limitation of Liability',
+      'Insurance',
+      'Confidentiality/NDA',
+      'IP Ownership',
+      'Compliance with Laws',
+      'Termination Rights',
+      'Effects of Termination',
+      'Dispute Resolution',
+      'Assignment',
+      'Notices',
+      'Entire Agreement',
+      'Severability'
+    ],
+    clauseGuidance: {
+      'Parties & Capacity': 'Identify hiring party and contractor with business names, addresses, and tax ID numbers. Emphasize contractor\'s business entity status and independent operation.',
+      'Relationship of Parties': 'Explicitly state independent contractor relationship, no employment created, contractor controls methods and means, can work for others, and responsible for own taxes/benefits. Critical for classification compliance.',
+      'Scope of Work / Deliverables': 'Define specific project-based deliverables with objective acceptance criteria, avoid ongoing operational duties, preserve contractor\'s right to refuse projects, and minimize integration with hiring party\'s operations.',
+      'Term & Renewal': 'Use project-based terms or short-term engagements (under 1 year typical), avoid evergreen clauses, and include clear end dates to prevent indefinite relationship suggesting employment.',
+      'Pricing & Payment': 'Use project/milestone-based payment rather than hourly wages, avoid benefits or expense reimbursement (except materials), allow contractor to invoice using own business processes, and specify payment terms (NET 30 typical).',
+      'Warranties & Representations': 'Contractor warrants independent business operation, proper licensing/permits, compliance with tax obligations, availability of necessary tools/equipment, and no conflicting obligations.',
+      'Indemnification': 'Mutual indemnification with contractor indemnifying for employment classification, tax liabilities, and subcontractor acts. Include carve-outs for gross negligence and willful misconduct.',
+      'Limitation of Liability': 'Cap total liability at project value, exclude consequential damages, and include exceptions for indemnification obligations and intentional misconduct.',
+      'Insurance': 'Require contractor to maintain professional liability, general liability, and workers compensation (if applicable). Include additional insured status and waiver of subrogation.',
+      'Confidentiality/NDA': 'Protect confidential information with standard exceptions, include return obligations, limit to project-related information, and ensure flow-down to subcontractors.',
+      'IP Ownership': 'Clarify that work product belongs to hiring party while preserving contractor\'s pre-existing IP, general methodologies, and tools. Include assignment language for work-for-hire.',
+      'Compliance with Laws': 'Reference independent contractor classification laws, tax obligations, licensing requirements, and industry-specific regulations. Avoid requiring compliance with hiring party\'s employee policies.',
+      'Termination Rights': 'Allow termination by either party with notice (30 days typical), include immediate termination for breach, and avoid employment-like progressive discipline procedures.',
+      'Effects of Termination': 'Specify completion of work in progress, final payment timing, return of confidential information, and survival of key provisions. Include transition assistance if needed.',
+      'Dispute Resolution': 'Include business-to-business dispute resolution with arbitration appropriate for commercial disputes, preserve right to injunctive relief, and specify jurisdiction.',
+      'Assignment': 'Allow contractor to use subcontractors (with approval), restrict hiring party assignment without consent, and address change of control situations.',
+      'Notices': 'Specify business addresses for notices, accept email for routine communications, and include procedures for urgent matters.',
+      'Entire Agreement': 'Integrate all project terms while preserving separate statements of work, supersede employment discussions, and require written modifications.',
+      'Severability': 'Include blue pencil provisions for overly restrictive terms and general severability to preserve the independent contractor relationship even if portions are unenforceable.'
+    }
   },
 
   'Non-Compete Agreement': {
@@ -1310,6 +1695,34 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Tolling and Extension',
       'Release and Waiver Procedures'
     ],
+    essentialClauses: [
+      'Parties & Capacity',
+      'Term & Renewal',
+      'Confidentiality/NDA',
+      'Compliance with Laws',
+      'Termination Rights',
+      'Dispute Resolution',
+      'Governing Law',
+      'Assignment',
+      'Notices',
+      'Entire Agreement',
+      'Amendment & Waiver',
+      'Severability'
+    ],
+    clauseGuidance: {
+      'Parties & Capacity': 'Identify employer and employee/contractor with full legal names, addresses, and authority. Include consideration details (salary continuation, severance, etc.).',
+      'Term & Renewal': 'Specify exact restriction period (6-24 months typical), start/end dates, tolling provisions, and clear expiration terms. Avoid indefinite periods.',
+      'Confidentiality/NDA': 'Integrate with non-compete restrictions, define confidential information that justifies restriction, include return obligations and survival periods.',
+      'Compliance with Laws': 'Reference state-specific non-compete laws, disclosure requirements, consideration thresholds, and industry-specific regulations.',
+      'Termination Rights': 'Define when restrictions begin (termination date), immediate vs. gradual effectiveness, and conditions that void restrictions.',
+      'Dispute Resolution': 'Include expedited procedures given time-sensitive nature, provisional remedies, injunctive relief rights, and jurisdiction selection.',
+      'Governing Law': 'Select enforcing jurisdiction with favorable non-compete law. Consider where employee will work and company operates.',
+      'Assignment': 'Allow employer assignment to acquirers, successors, and affiliates. Restrict employee assignment while preserving personal nature.',
+      'Notices': 'Specify delivery methods for enforcement notices, addresses for service, emergency contact procedures, and deemed receipt timing.',
+      'Entire Agreement': 'Supersede prior non-compete discussions while preserving employment agreement, severance terms, and other restrictive covenants.',
+      'Amendment & Waiver': 'Require written modifications, specify waiver procedures, and preserve employer\'s right to waive restrictions.',
+      'Severability': 'Include blue pencil provisions allowing courts to modify overly broad restrictions. Preserve remainder if portions unenforceable.'
+    },
     advancedComplianceNotes: {
       multiJurisdictionalConsiderations: [
         'California: Prohibits most non-competes; specific invention assignment rules',
@@ -1566,6 +1979,38 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Confidentiality',
       'Governing Law and Dispute Resolution'
     ],
+    essentialClauses: [
+      'Parties & Capacity',
+      'Term & Renewal',
+      'Warranties & Representations',
+      'Confidentiality/NDA',
+      'Compliance with Laws',
+      'Termination Rights',
+      'Effects of Termination',
+      'Dispute Resolution',
+      'Governing Law',
+      'Assignment',
+      'Notices',
+      'Entire Agreement',
+      'Amendment & Waiver',
+      'Severability'
+    ],
+    clauseGuidance: {
+      'Parties & Capacity': 'Identify employer and departing employee with full legal names, addresses, employment dates, and final position. Include authorization for corporate signatories.',
+      'Term & Renewal': 'Specify severance payment periods, benefit continuation terms, ADEA consideration periods (21/45 days), revocation periods (7 days), and effective dates.',
+      'Warranties & Representations': 'Employee warrants return of company property, no retained confidential information, compliance with prior agreements, and accuracy of final representations.',
+      'Confidentiality/NDA': 'Reinforce ongoing confidentiality obligations, define company confidential information, include return/destruction requirements, and specify survival periods.',
+      'Compliance with Laws': 'Reference ADEA, OWBPA, state severance laws, WARN Act requirements, ERISA compliance, and industry-specific regulations.',
+      'Termination Rights': 'Define effective termination date, resignation vs. termination characterization, and final pay obligations including accrued vacation.',
+      'Effects of Termination': 'Specify severance payments, benefits continuation (COBRA), vested benefit preservation, and timeline for all termination procedures.',
+      'Dispute Resolution': 'Include arbitration clauses with ADEA carve-outs, expedited procedures for benefit disputes, and attorney fee provisions.',
+      'Governing Law': 'Select favorable jurisdiction for enforcement, consider where employee worked and will work, and address multi-state employment issues.',
+      'Assignment': 'Restrict employee assignment while allowing employer assignment to successors, affiliates, and acquirers in M&A transactions.',
+      'Notices': 'Specify delivery methods for all notices, addresses for service, emergency contacts, and deemed receipt timing for all communications.',
+      'Entire Agreement': 'Supersede prior severance discussions while preserving employment agreement terms, stock plans, benefit programs, and restrictive covenants.',
+      'Amendment & Waiver': 'Require written modifications signed by both parties, specify waiver procedures, and preserve enforceability of remaining terms.',
+      'Severability': 'Include blue pencil provisions for restrictive covenants and general severability to preserve release and severance benefits if portions unenforceable.'
+    },
     advancedComplianceNotes: {
       multiJurisdictionalConsiderations: [
         'California: Prohibits most non-competes; specific invention assignment rules',
@@ -1822,6 +2267,28 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Integration Clause',
       'Acceptance Mechanism'
     ],
+    essentialClauses: [
+      'Parties & Capacity',
+      'Term & Renewal',
+      'Warranties & Representations',
+      'Compliance with Laws',
+      'Assignment',
+      'Notices',
+      'Entire Agreement',
+      'Amendment & Waiver',
+      'Severability'
+    ],
+    clauseGuidance: {
+      'Parties & Capacity': 'Identify employer and candidate with full legal names, addresses, and position title. Include authorized signatory information and candidate\'s legal capacity to work.',
+      'Term & Renewal': 'Specify start date, offer expiration date (typically 5-10 business days), acceptance deadline, and any probationary period (90 days typical).',
+      'Warranties & Representations': 'Candidate warrants legal capacity to work, no conflicting obligations, accuracy of application materials, and ability to fulfill job requirements.',
+      'Compliance with Laws': 'Reference employment eligibility verification (I-9), background check requirements, drug testing policies, and industry-specific licensing or clearance needs.',
+      'Assignment': 'Clarify that offer is personal to candidate and cannot be assigned. Include provisions for corporate changes affecting the offer.',
+      'Notices': 'Specify acceptance methods (signed copy, email confirmation), delivery addresses, and timing for all offer-related communications.',
+      'Entire Agreement': 'State that offer letter contains complete offer terms while preserving references to employee handbook, benefit plans, and required employment agreements.',
+      'Amendment & Waiver': 'Require written modifications signed by authorized company representative. Specify that verbal representations do not modify written offer.',
+      'Severability': 'Include provisions to preserve offer validity if individual terms are unenforceable, with specific protection for core compensation and employment terms.'
+    },
     advancedComplianceNotes: {
       multiJurisdictionalConsiderations: [
         'California: Prohibits most non-competes; specific invention assignment rules',
@@ -1846,262 +2313,6 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
     }
   },
 
-  'Software as a Service (SaaS) Agreement': {
-    contractType: 'Software as a Service (SaaS) Agreement',
-    keyReviewPoints: [
-      {
-        category: 'Service Levels & Performance Standards',
-        description: 'Comprehensive framework for service availability, performance metrics, and remedies for failures',
-        mustHave: [
-          'Uptime commitment percentage (99.9% typical)',
-          'Availability measurement methodology',
-          'Planned maintenance windows',
-          'Service credit calculations',
-          'Performance metrics defined',
-          'Response time guarantees',
-          'Escalation procedures',
-          'Real-time monitoring access',
-          'Service degradation definitions',
-          'Disaster recovery RTO/RPO'
-        ],
-        shouldAvoid: [
-          'No SLA commitments',
-          'Sole remedy limitations',
-          'Excessive maintenance windows',
-          'No performance metrics',
-          'Provider sole measurement',
-          'No credit automation',
-          'Force majeure too broad',
-          'No root cause analysis',
-          'Availability below 99%',
-          'No DR commitments'
-        ]
-      },
-      {
-        category: 'Data Security & Privacy Architecture',
-        description: 'Multi-layered security framework addressing data protection, privacy compliance, and breach protocols',
-        mustHave: [
-          'Encryption at rest/transit standards',
-          'SOC 2 Type II certification',
-          'Access control specifications',
-          'Security audit rights',
-          'Breach notification timeline',
-          'Data segregation protocols',
-          'Backup frequency/retention',
-          'GDPR/CCPA compliance',
-          'Vulnerability management',
-          'Incident response procedures'
-        ],
-        shouldAvoid: [
-          'No security standards',
-          'Disclaimer of breaches',
-          'No audit rights',
-          'Delayed breach notice',
-          'Data commingling',
-          'No backup guarantees',
-          'Privacy law exemptions',
-          'No penetration testing',
-          'Security at sole discretion',
-          'No cyber insurance'
-        ]
-      },
-      {
-        category: 'Data Ownership & Portability Framework',
-        description: 'Clear delineation of data rights, export capabilities, and post-termination access',
-        mustHave: [
-          'Customer data ownership',
-          'Export functionality specs',
-          'API access for extraction',
-          'Standard format exports',
-          'Bulk download capabilities',
-          'Metadata preservation',
-          'Real-time replication options',
-          'Post-term retrieval period',
-          'Data deletion certification',
-          'No vendor lock-in'
-        ],
-        shouldAvoid: [
-          'Provider data claims',
-          'No export capabilities',
-          'Proprietary formats only',
-          'Export fees excessive',
-          'No API access',
-          'Data hostage scenarios',
-          'Immediate deletion',
-          'No transition assistance',
-          'Derived data claims',
-          'Usage restrictions'
-        ]
-      },
-      {
-        category: 'Subscription Terms & Payment Structure',
-        description: 'Flexible subscription model with transparent pricing and modification procedures',
-        mustHave: [
-          'Subscription tiers defined',
-          'User/usage metrics clear',
-          'Overage handling process',
-          'Price protection period',
-          'Renewal notice requirements',
-          'Downgrade/upgrade rights',
-          'Pro-ration methodology',
-          'Payment terms specified',
-          'Auto-renewal controls',
-          'Cancellation procedures'
-        ],
-        shouldAvoid: [
-          'Automatic price increases',
-          'No downgrade options',
-          'Penalty for reduction',
-          'Hidden usage fees',
-          'No price transparency',
-          'Locked-in commitments',
-          'No refund provisions',
-          'Immediate termination',
-          'No usage visibility',
-          'Retroactive pricing'
-        ]
-      },
-      {
-        category: 'Integration & Customization Framework',
-        description: 'Technical integration capabilities, API access, and customization boundaries',
-        mustHave: [
-          'API documentation access',
-          'Integration support levels',
-          'Sandbox environment',
-          'Rate limiting policies',
-          'Webhook capabilities',
-          'SSO/SAML support',
-          'Custom field allowances',
-          'White-labeling options',
-          'Third-party integrations',
-          'Version control notices'
-        ],
-        shouldAvoid: [
-          'No API access',
-          'Integration fees hidden',
-          'No test environment',
-          'Arbitrary rate limits',
-          'No customization allowed',
-          'Forced branding',
-          'No third-party connects',
-          'Breaking changes anytime',
-          'No backwards compatibility',
-          'Integration IP claims'
-        ]
-      }
-    ],
-    redFlags: [
-      {
-        pattern: 'no warranties|as is|all risk assumed|no guarantees',
-        severity: 'high',
-        explanation: 'Complete disclaimer inappropriate for paid enterprise service',
-        affectedParty: 'Customer'
-      },
-      {
-        pattern: 'provider owns|license to customer data|derivative works from data',
-        severity: 'high',
-        explanation: 'Provider claiming ownership over customer data violates data sovereignty',
-        affectedParty: 'Customer'
-      },
-      {
-        pattern: 'may change prices|immediate effect|no notice required',
-        severity: 'high',
-        explanation: 'Unilateral price changes without protection disrupts budgeting',
-        affectedParty: 'Customer'
-      },
-      {
-        pattern: 'no export|data deletion upon termination|no retrieval period',
-        severity: 'high',
-        explanation: 'Data hostage scenario prevents vendor mobility',
-        affectedParty: 'Customer'
-      },
-      {
-        pattern: 'unlimited liability|consequential damages included|no damage caps',
-        severity: 'high',
-        explanation: 'Disproportionate risk for subscription service',
-        affectedParty: 'Provider'
-      },
-      {
-        pattern: 'suspend immediately|sole discretion|no notice|no appeal',
-        severity: 'high',
-        explanation: 'Arbitrary suspension rights threaten business continuity',
-        affectedParty: 'Customer'
-      },
-      {
-        pattern: 'monitor usage|access customer data|use for improvements',
-        severity: 'medium',
-        explanation: 'Broad data usage rights raise privacy/confidentiality concerns',
-        affectedParty: 'Customer'
-      },
-      {
-        pattern: 'exclusive venue|provider state only|mandatory arbitration',
-        severity: 'medium',
-        explanation: 'One-sided dispute resolution favoring provider',
-        affectedParty: 'Customer'
-      }
-    ],
-    partySpecificConcerns: {
-      'Customer': [
-        'Service Reliability: Consistent availability meeting business requirements',
-        'Data Sovereignty: Maintaining ownership and control of business data',
-        'Vendor Lock-in: Ability to migrate to alternatives without data loss',
-        'Cost Predictability: Transparent pricing without surprise charges',
-        'Security Assurance: Enterprise-grade protection for sensitive data',
-        'Compliance Support: Meeting regulatory requirements (GDPR, HIPAA, etc.)',
-        'Performance Scalability: Service grows with business needs',
-        'Integration Flexibility: Works with existing technology stack',
-        'Support Quality: Responsive technical assistance when needed',
-        'Exit Strategy: Clean data extraction and transition support'
-      ],
-      'Provider': [
-        'Revenue Predictability: Stable subscription base with growth potential',
-        'Scope Management: Preventing feature creep without compensation',
-        'Infrastructure Costs: Balancing service levels with profitability',
-        'Liability Limitation: Proportional risk to subscription fees',
-        'IP Protection: Safeguarding proprietary technology',
-        'Customer Success: Ensuring adoption and renewal rates',
-        'Competitive Position: Differentiation while maintaining margins',
-        'Compliance Burden: Managing multi-jurisdictional requirements',
-        'Bad Actor Prevention: Protecting platform from abuse',
-        'Scalability Management: Controlled growth within capacity'
-      ]
-    },
-    criticalClauses: [
-      'Service Description and Scope (with feature specifications)',
-      'Service Level Agreement (with uptime commitments)',
-      'Data Security and Privacy (with compliance obligations)',
-      'Data Ownership and Portability (with export rights)',
-      'Subscription Terms and Fees (with modification procedures)',
-      'Acceptable Use Policy (with enforcement procedures)',
-      'Intellectual Property Rights (with customer data exclusions)',
-      'Limitation of Liability (with appropriate carve-outs)',
-      'Term and Termination (with data retrieval periods)',
-      'Support and Maintenance (with response times)'
-    ],
-    advancedComplianceNotes: {
-      multiJurisdictionalConsiderations: [
-        'GDPR: Data processing terms, privacy by design, DPO requirements',
-        'CCPA/CPRA: Consumer rights implementation, sale definitions, opt-out mechanisms',
-        'HIPAA: BAA requirements, security rule compliance, breach notifications',
-        'PCI DSS: Cardholder data protection, security standards, audit requirements',
-        'SOX: Financial data controls, audit trails, access management'
-      ],
-      federalRegulatoryOverlay: [
-        'Financial Services: GLBA compliance, FFIEC guidance, open banking APIs',
-        'Healthcare: HIPAA/HITECH, FDA software regulations, clinical data handling',
-        'Government: FedRAMP, FISMA, ITAR/EAR export controls',
-        'Education: FERPA, COPPA for K-12, accessibility requirements',
-        'Retail: PCI compliance, state privacy laws, consumer protection'
-      ],
-      industrySpecificRequirements: [
-        'Security: NIST frameworks, ISO 27001/27701, OWASP guidelines',
-        'Accessibility: WCAG 2.1 AA, Section 508, ADA compliance',
-        'Interoperability: REST/SOAP standards, OAuth 2.0, OpenAPI specifications',
-        'Performance: Apdex scores, Core Web Vitals, mobile performance',
-        'Reliability: Five 9s methodology, chaos engineering principles'
-      ]
-    }
-  },
 
   'Software Licensing Agreement': {
     contractType: 'Software Licensing Agreement',
@@ -2356,7 +2567,42 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
         'Interoperability: REST/SOAP standards, OAuth 2.0, OpenAPI specifications',
         'Performance: Apdex scores, Core Web Vitals, mobile performance',
         'Reliability: Five 9s methodology, chaos engineering principles'
-      ]
+      ],
+    essentialClauses: [
+      'Parties & Capacity',
+      'Scope of Work / Deliverables',
+      'Term & Renewal',
+      'Pricing & Payment',
+      'Warranties & Representations',
+      'Limitation of Liability',
+      'IP License',
+      'Compliance with Laws',
+      'Termination Rights',
+      'Effects of Termination',
+      'Dispute Resolution',
+      'Assignment',
+      'Notices',
+      'Entire Agreement',
+      'Amendment & Waiver',
+      'Severability'
+    ],
+    clauseGuidance: {
+      'Parties & Capacity': 'Identify software licensor and licensee with full business details, authorized users count, and contracting authority.',
+      'Scope of Work / Deliverables': 'Define licensed software, included modules, documentation, support services, and any excluded components.',
+      'Term & Renewal': 'Specify license term (perpetual vs. term), renewal options, notice periods, and upgrade/maintenance periods.',
+      'Pricing & Payment': 'Detail license fees, maintenance costs, payment terms, late fees, and any usage-based charges.',
+      'Warranties & Representations': 'Licensor warrants software functionality, non-infringement, and compliance. Include disclaimer limitations.',
+      'Limitation of Liability': 'Cap licensor liability at license fees paid, exclude consequential damages, include exceptions for IP infringement.',
+      'IP License': 'Grant licensee rights to use software, specify restrictions (no reverse engineering), and preserve licensor IP ownership.',
+      'Compliance with Laws': 'Reference export control laws, data protection regulations, industry-specific compliance requirements.',
+      'Termination Rights': 'Define termination for breach, non-payment, and convenience. Include immediate termination for IP violations.',
+      'Effects of Termination': 'Specify software return/destruction, data export rights, surviving license provisions, and transition assistance.',
+      'Dispute Resolution': 'Include arbitration with expedited procedures for IP disputes, venue selection, and injunctive relief provisions.',
+      'Assignment': 'Restrict licensee assignment without consent, allow licensor assignment to affiliates and acquirers.',
+      'Notices': 'Specify delivery methods, addresses for licensing notices, and emergency contact procedures.',
+      'Entire Agreement': 'Supersede prior licensing discussions while preserving purchase orders, statements of work, and maintenance agreements.',
+      'Amendment & Waiver': 'Require written modifications, specify software update procedures, and preserve licensor modification rights.',
+      'Severability': 'Include provisions to preserve licensing terms if portions are unenforceable, with protection for core IP rights.'
     }
   },
 
@@ -2592,6 +2838,36 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Governing Law (considering consumer forum)',
       'Modification Procedures (with proper notice)'
     ],
+    essentialClauses: [
+      'License Grant and Scope',
+      'Usage Restrictions and Permitted Uses',
+      'Privacy and Data Collection Notice',
+      'Automatic Updates and Software Modifications',
+      'Intellectual Property Rights',
+      'User Content and Ownership',
+      'Warranty Disclaimers and Consumer Rights',
+      'Limitation of Liability',
+      'Termination Conditions and Data Rights',
+      'Dispute Resolution and Governing Law',
+      'Third-Party Software and Open Source',
+      'Export Control and Geographic Restrictions',
+      'Modification and Amendment Procedures'
+    ],
+    clauseGuidance: {
+      'License Grant and Scope': 'Define clear personal/commercial use distinctions, device limitations, family sharing rights, and geographic restrictions',
+      'Usage Restrictions and Permitted Uses': 'Specify permitted activities, backup rights, modification allowances, and educational use provisions',
+      'Privacy and Data Collection Notice': 'Detail data types collected, purposes, opt-out mechanisms, GDPR/CCPA compliance, and child protection measures',
+      'Automatic Updates and Software Modifications': 'Include update notification options, opt-out capabilities, rollback procedures, and compatibility commitments',
+      'Intellectual Property Rights': 'Clarify software ownership, user content rights, trademark usage, and reverse engineering restrictions',
+      'User Content and Ownership': 'Define user-generated content ownership, license grants to provider, and content removal policies',
+      'Warranty Disclaimers and Consumer Rights': 'Preserve statutory consumer rights, provide basic fitness warranties, and specify support channels',
+      'Limitation of Liability': 'Ensure consumer law compliance, maintain statutory protections, and provide reasonable damage caps',
+      'Termination Conditions and Data Rights': 'Include fair termination procedures, data export rights, refund calculations, and post-term access periods',
+      'Dispute Resolution and Governing Law': 'Consider consumer-friendly forums, class action availability, and alternative dispute resolution options',
+      'Third-Party Software and Open Source': 'Disclose third-party components, open source licenses, and separate terms applicable to bundled software',
+      'Export Control and Geographic Restrictions': 'Address applicable export regulations, geographic limitations, and compliance with local laws',
+      'Modification and Amendment Procedures': 'Require proper notice for changes, grandfathering provisions, and user consent mechanisms for material modifications'
+    },
     advancedComplianceNotes: {
       multiJurisdictionalConsiderations: [
         'GDPR: Data processing terms, privacy by design, DPO requirements',
@@ -2849,6 +3125,40 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Dispute Resolution (considering user rights)',
       'Governing Law and Venue (appropriate for users)'
     ],
+    essentialClauses: [
+      'Account Registration and Identity Verification',
+      'User Responsibilities and Code of Conduct',
+      'Content License and Intellectual Property Rights',
+      'Prohibited Uses and Community Guidelines',
+      'Privacy Policy Integration and Data Handling',
+      'Service Availability and Modifications',
+      'Payment Terms and Billing (if applicable)',
+      'Termination and Account Suspension',
+      'User-Generated Content Policies',
+      'Third-Party Services and Links',
+      'Disclaimers and Warranty Limitations',
+      'Liability Limitations and Indemnification',
+      'Dispute Resolution and Legal Process',
+      'Governing Law and Jurisdiction',
+      'Platform-Specific Terms and Features'
+    ],
+    clauseGuidance: {
+      'Account Registration and Identity Verification': 'Include age requirements (COPPA compliance), accurate information duties, account security responsibilities, and parental consent mechanisms',
+      'User Responsibilities and Code of Conduct': 'Define expected user behavior, community standards, reporting mechanisms, and consequences for violations',
+      'Content License and Intellectual Property Rights': 'Clarify license scope for user content, platform usage rights, content removal policies, and IP ownership preservation',
+      'Prohibited Uses and Community Guidelines': 'Specify forbidden activities, hate speech policies, spam prevention, and illegal content restrictions',
+      'Privacy Policy Integration and Data Handling': 'Reference comprehensive privacy policy, outline data collection purposes, and specify user control options',
+      'Service Availability and Modifications': 'Address uptime expectations, maintenance windows, feature changes, and service discontinuation procedures',
+      'Payment Terms and Billing (if applicable)': 'Include subscription terms, refund policies, automatic renewal disclosures, and payment method requirements',
+      'Termination and Account Suspension': 'Define termination grounds, appeal procedures, data retention periods, and account reactivation processes',
+      'User-Generated Content Policies': 'Establish content moderation procedures, takedown processes, counter-notification rights, and community reporting systems',
+      'Third-Party Services and Links': 'Disclaim responsibility for external services, outline integration policies, and address third-party data sharing',
+      'Disclaimers and Warranty Limitations': 'Preserve statutory consumer rights while limiting service warranties and specifying "as-is" provisions where legally permitted',
+      'Liability Limitations and Indemnification': 'Ensure consumer law compliance, provide reasonable damage caps, and limit user indemnification obligations',
+      'Dispute Resolution and Legal Process': 'Consider consumer-friendly forums, class action availability, and alternative dispute resolution options',
+      'Governing Law and Jurisdiction': 'Select appropriate legal frameworks considering user locations and consumer protection requirements',
+      'Platform-Specific Terms and Features': 'Address unique platform features, API usage terms, developer policies, and integration-specific requirements'
+    },
     advancedComplianceNotes: {
       multiJurisdictionalConsiderations: [
         'GDPR: Data processing terms, privacy by design, DPO requirements',
@@ -2876,6 +3186,35 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
 
   'Privacy Policy': {
     contractType: 'Privacy Policy',
+    aliases: [
+      'Privacy Notice',
+      'Data Privacy Policy',
+      'Personal Data Policy',
+      'Information Privacy Policy',
+      'Data Protection Policy',
+      'Privacy Statement',
+      'Data Collection Policy'
+    ],
+    keyIdentifyingTerms: [
+      'privacy policy',
+      'personal data',
+      'data collection',
+      'cookies',
+      'gdpr',
+      'ccpa',
+      'privacy rights',
+      'data protection',
+      'personal information',
+      'data processing',
+      'user data'
+    ],
+    industryVariations: [
+      'Website Privacy Policy',
+      'Mobile App Privacy Policy',
+      'Healthcare Privacy Policy',
+      'Financial Privacy Policy',
+      'Children\'s Privacy Policy'
+    ],
     keyReviewPoints: [
       {
         category: 'Data Collection Scope & Purposes',
@@ -3106,6 +3445,40 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Contact Information (DPO and privacy team)',
       'Changes to Policy (notification procedures)'
     ],
+    essentialClauses: [
+      'Information Collection and Categories',
+      'Legal Basis for Processing',
+      'Purposes and Uses of Personal Information',
+      'Information Sharing and Third-Party Disclosure',
+      'Cookies and Tracking Technologies',
+      'Data Subject Rights and Choices',
+      'Data Security Measures and Breach Procedures',
+      'Data Retention and Deletion Policies',
+      'International Data Transfers and Safeguards',
+      'Children\'s Privacy Protection',
+      'Marketing and Communications Preferences',
+      'Automated Decision-Making and Profiling',
+      'Contact Information and Data Protection Officer',
+      'Privacy Policy Updates and Notification Procedures',
+      'Jurisdiction-Specific Rights and Compliance'
+    ],
+    clauseGuidance: {
+      'Information Collection and Categories': 'Comprehensively list all personal data types collected, including automatic collection, third-party sources, and inferred data',
+      'Legal Basis for Processing': 'Clearly state lawful bases under GDPR/privacy laws for each processing purpose, including consent, legitimate interests, and legal obligations',
+      'Purposes and Uses of Personal Information': 'Detail specific purposes for data processing, linking each purpose to collected data types and legal basis',
+      'Information Sharing and Third-Party Disclosure': 'Identify all third-party recipients, sharing purposes, data categories shared, and safeguards in place',
+      'Cookies and Tracking Technologies': 'Explain cookie types, tracking mechanisms, opt-out procedures, and third-party analytics tools used',
+      'Data Subject Rights and Choices': 'Describe access, rectification, erasure, portability, and objection rights with clear exercise procedures',
+      'Data Security Measures and Breach Procedures': 'Outline technical and organizational security measures, breach notification timelines, and user notification procedures',
+      'Data Retention and Deletion Policies': 'Specify retention periods for different data categories, deletion procedures, and criteria for determining retention needs',
+      'International Data Transfers and Safeguards': 'Detail cross-border transfer mechanisms, adequacy decisions, standard contractual clauses, or other safeguards',
+      'Children\'s Privacy Protection': 'Address COPPA compliance, age verification, parental consent procedures, and special protections for minors',
+      'Marketing and Communications Preferences': 'Explain opt-in/opt-out procedures for marketing communications, preference centers, and unsubscribe mechanisms',
+      'Automated Decision-Making and Profiling': 'Disclose algorithmic decision-making, profiling activities, logic involved, and rights to human review',
+      'Contact Information and Data Protection Officer': 'Provide clear contact details for privacy inquiries, DPO information where required, and response timeframes',
+      'Privacy Policy Updates and Notification Procedures': 'Explain how policy changes are communicated, effective dates, and user notification methods',
+      'Jurisdiction-Specific Rights and Compliance': 'Address region-specific requirements like CCPA consumer rights, PIPEDA provisions, or other applicable privacy laws'
+    },
     advancedComplianceNotes: {
       multiJurisdictionalConsiderations: [
         'GDPR: Data processing terms, privacy by design, DPO requirements',
@@ -3363,6 +3736,40 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Liability and Indemnification (fair allocation)',
       'Termination and Deletion (return/deletion procedures)'
     ],
+    essentialClauses: [
+      'Processing Scope and Instructions',
+      'Data Categories and Processing Purposes',
+      'Controller and Processor Obligations',
+      'Sub-processor Authorization and Management',
+      'Technical and Organizational Security Measures',
+      'Personal Data Breach Notification Procedures',
+      'Data Subject Rights Assistance Framework',
+      'Controller Audit and Inspection Rights',
+      'International Data Transfer Safeguards',
+      'Data Retention and Deletion Requirements',
+      'Confidentiality and Staff Training',
+      'Compliance Documentation and Records',
+      'Liability Allocation and Indemnification',
+      'Termination and Data Return/Deletion',
+      'Regulatory Change Adaptation Procedures'
+    ],
+    clauseGuidance: {
+      'Processing Scope and Instructions': 'Define precise processing activities, data controller instructions, and documented approval procedures for any processing changes',
+      'Data Categories and Processing Purposes': 'Specify exact personal data categories, data subject types, processing purposes, and retention periods with clear limitations',
+      'Controller and Processor Obligations': 'Detail Article 28 GDPR compliance requirements, processor duties, and controller oversight responsibilities',
+      'Sub-processor Authorization and Management': 'Include approval procedures for sub-processors, contract flow-down requirements, and notification obligations for changes',
+      'Technical and Organizational Security Measures': 'Specify Article 32 security measures, encryption requirements, access controls, and security incident procedures',
+      'Personal Data Breach Notification Procedures': 'Establish breach detection, assessment, notification timelines (72-hour rule), and communication protocols',
+      'Data Subject Rights Assistance Framework': 'Define processor assistance for data subject requests, timelines, and technical/organizational measures for compliance',
+      'Controller Audit and Inspection Rights': 'Specify audit frequency, scope, procedures, and processor cooperation requirements for compliance verification',
+      'International Data Transfer Safeguards': 'Address adequacy decisions, standard contractual clauses, additional safeguards, and transfer impact assessments',
+      'Data Retention and Deletion Requirements': 'Define retention periods, deletion procedures, backup handling, and data return/destruction certification processes',
+      'Confidentiality and Staff Training': 'Establish confidentiality commitments, staff training requirements, and access authorization procedures',
+      'Compliance Documentation and Records': 'Specify record-keeping obligations, compliance evidence, and documentation availability for regulatory authorities',
+      'Liability Allocation and Indemnification': 'Define liability chains for GDPR violations, indemnification procedures, and damage calculation methodologies',
+      'Termination and Data Return/Deletion': 'Establish data return/deletion procedures, timelines, certification requirements, and post-termination obligations',
+      'Regulatory Change Adaptation Procedures': 'Include mechanisms for adapting to regulatory changes, cost allocation, and timeline for implementing updates'
+    },
     advancedComplianceNotes: {
       multiJurisdictionalConsiderations: [
         'GDPR: Data processing terms, privacy by design, DPO requirements',
@@ -3620,6 +4027,40 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Liability and Indemnification (balanced allocation)',
       'Data Portability (export and migration)'
     ],
+    essentialClauses: [
+      'Service Architecture and Deployment Models',
+      'Service Level Agreements and Performance Metrics',
+      'Shared Security Responsibility Model',
+      'Data Location, Sovereignty, and Residency',
+      'Access Controls and Identity Management',
+      'Backup, Recovery, and Business Continuity',
+      'Service Monitoring and Incident Management',
+      'Compliance and Audit Frameworks',
+      'Usage Limits, Quotas, and Scaling Policies',
+      'Pricing, Billing, and Cost Management',
+      'Service Modifications and Deprecation Procedures',
+      'Data Migration, Portability, and Export Rights',
+      'Support Services and Response Times',
+      'Termination Procedures and Data Handling',
+      'Third-Party Integrations and Dependencies'
+    ],
+    clauseGuidance: {
+      'Service Architecture and Deployment Models': 'Define IaaS/PaaS/SaaS components, deployment options (public/private/hybrid), resource specifications, and multi-tenancy implications',
+      'Service Level Agreements and Performance Metrics': 'Specify uptime commitments, performance benchmarks, measurement methodologies, and remedies for SLA breaches',
+      'Shared Security Responsibility Model': 'Clearly delineate security responsibilities between provider and customer, including infrastructure, application, and data security',
+      'Data Location, Sovereignty, and Residency': 'Address data center locations, cross-border transfer restrictions, regulatory compliance requirements, and sovereignty controls',
+      'Access Controls and Identity Management': 'Define authentication methods, role-based access controls, multi-factor authentication, and identity federation capabilities',
+      'Backup, Recovery, and Business Continuity': 'Specify backup procedures, disaster recovery capabilities, recovery time objectives (RTO), and recovery point objectives (RPO)',
+      'Service Monitoring and Incident Management': 'Establish monitoring capabilities, incident response procedures, communication protocols, and escalation processes',
+      'Compliance and Audit Frameworks': 'Address regulatory compliance support, audit rights, certification maintenance, and compliance reporting capabilities',
+      'Usage Limits, Quotas, and Scaling Policies': 'Define resource limits, auto-scaling policies, quota management, and procedures for handling usage spikes',
+      'Pricing, Billing, and Cost Management': 'Specify pricing models, billing cycles, cost optimization tools, and procedures for disputing charges',
+      'Service Modifications and Deprecation Procedures': 'Establish notification timelines for service changes, grandfathering provisions, and migration assistance for deprecated features',
+      'Data Migration, Portability, and Export Rights': 'Define data export formats, migration assistance, timeline for data availability post-termination, and vendor lock-in prevention',
+      'Support Services and Response Times': 'Specify support tiers, response time commitments, escalation procedures, and technical support availability',
+      'Termination Procedures and Data Handling': 'Establish termination notice periods, data deletion/return procedures, service wind-down timelines, and final billing reconciliation',
+      'Third-Party Integrations and Dependencies': 'Address third-party service dependencies, integration support, liability for third-party failures, and change management for dependencies'
+    },
     advancedComplianceNotes: {
       multiJurisdictionalConsiderations: [
         'GDPR: Data processing terms, privacy by design, DPO requirements',
@@ -3877,6 +4318,40 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Deprecation Policy (timelines and procedures)',
       'Termination (grounds and effects)'
     ],
+    essentialClauses: [
+      'API Access Rights and Scope Definition',
+      'Authentication Methods and Security Requirements',
+      'Rate Limiting and Usage Quotas',
+      'Acceptable Use Policy and Prohibited Activities',
+      'Data Access, Usage, and Privacy Rights',
+      'Intellectual Property Licenses and Restrictions',
+      'API Documentation and Support',
+      'Service Level Agreements and Availability',
+      'Versioning, Deprecation, and Migration Policies',
+      'Commercial Terms and Pricing Models',
+      'Developer Registration and Account Management',
+      'Monitoring, Analytics, and Usage Reporting',
+      'Error Handling and Response Codes',
+      'Third-Party Dependencies and Integrations',
+      'Termination, Suspension, and Appeal Procedures'
+    ],
+    clauseGuidance: {
+      'API Access Rights and Scope Definition': 'Clearly define API endpoints available, access levels, data scope, and any functional limitations or restrictions on usage',
+      'Authentication Methods and Security Requirements': 'Specify OAuth, API keys, or other authentication methods, security protocols, and credential management requirements',
+      'Rate Limiting and Usage Quotas': 'Define requests per minute/hour/day limits, quota calculations, fair use policies, and procedures for requesting quota increases',
+      'Acceptable Use Policy and Prohibited Activities': 'List forbidden activities including reverse engineering, spam, illegal uses, and competitive intelligence gathering',
+      'Data Access, Usage, and Privacy Rights': 'Address data ownership, permitted uses of accessed data, privacy obligations, and restrictions on data storage or sharing',
+      'Intellectual Property Licenses and Restrictions': 'Clarify licensing of API access, restrictions on derivative works, trademark usage, and protection of proprietary algorithms',
+      'API Documentation and Support': 'Specify documentation availability, update procedures, developer support channels, and community resources',
+      'Service Level Agreements and Availability': 'Define uptime commitments, performance expectations, maintenance windows, and remedies for service failures',
+      'Versioning, Deprecation, and Migration Policies': 'Establish API versioning standards, deprecation notice timelines, migration assistance, and backward compatibility commitments',
+      'Commercial Terms and Pricing Models': 'Detail pricing structures, billing cycles, overage charges, payment terms, and any revenue-sharing arrangements',
+      'Developer Registration and Account Management': 'Outline registration requirements, account verification, key management, and procedures for account suspension or deletion',
+      'Monitoring, Analytics, and Usage Reporting': 'Address usage tracking, analytics provided to developers, data retention for logs, and compliance monitoring',
+      'Error Handling and Response Codes': 'Define standard error responses, debugging resources, incident reporting procedures, and escalation processes',
+      'Third-Party Dependencies and Integrations': 'Disclose third-party services used, integration requirements, and liability allocation for third-party failures',
+      'Termination, Suspension, and Appeal Procedures': 'Establish grounds for termination/suspension, notice requirements, appeal processes, and data handling post-termination'
+    },
     advancedComplianceNotes: {
       multiJurisdictionalConsiderations: [
         'GDPR: Data processing terms, privacy by design, DPO requirements',
@@ -4133,6 +4608,40 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Limitation of Liability (proportionate caps)',
       'Termination Rights (for cause and convenience)'
     ],
+    essentialClauses: [
+      'Project Scope and Deliverables Definition',
+      'Technical Specifications and Requirements',
+      'Development Timeline and Milestones',
+      'Payment Schedule and Terms',
+      'Intellectual Property Rights and Assignment',
+      'Change Request and Scope Management',
+      'Quality Assurance and Testing Procedures',
+      'User Acceptance Testing and Criteria',
+      'Deployment and Launch Procedures',
+      'Training and Documentation Delivery',
+      'Warranty and Maintenance Period',
+      'Ongoing Support and Bug Fixes',
+      'Confidentiality and Data Protection',
+      'Third-Party Licenses and Dependencies',
+      'Termination and Project Handover Procedures'
+    ],
+    clauseGuidance: {
+      'Project Scope and Deliverables Definition': 'Provide detailed functional specifications, platform requirements (iOS/Android/Web), feature lists, and clear acceptance criteria',
+      'Technical Specifications and Requirements': 'Define technical architecture, performance requirements, security standards, integration needs, and compatibility requirements',
+      'Development Timeline and Milestones': 'Establish development phases, milestone deliverables, review periods, and realistic deadlines with buffer time',
+      'Payment Schedule and Terms': 'Link payments to milestone completion, define payment terms, specify retainage, and address invoicing procedures',
+      'Intellectual Property Rights and Assignment': 'Clarify code ownership, licensing of third-party components, work-for-hire provisions, and developer tool rights',
+      'Change Request and Scope Management': 'Establish written change order procedures, impact assessment requirements, and additional cost calculation methods',
+      'Quality Assurance and Testing Procedures': 'Define testing methodologies, bug reporting procedures, performance benchmarks, and quality standards',
+      'User Acceptance Testing and Criteria': 'Specify UAT procedures, acceptance criteria, testing timeframes, and procedures for handling rejected deliverables',
+      'Deployment and Launch Procedures': 'Address deployment responsibilities, app store submission, server setup, domain configuration, and go-live support',
+      'Training and Documentation Delivery': 'Define user training requirements, technical documentation, admin guides, and knowledge transfer procedures',
+      'Warranty and Maintenance Period': 'Specify warranty duration, covered issues, response times for bug fixes, and maintenance responsibilities',
+      'Ongoing Support and Bug Fixes': 'Define post-launch support availability, bug classification, resolution timelines, and support channel access',
+      'Confidentiality and Data Protection': 'Establish mutual confidentiality obligations, data handling procedures, security requirements, and privacy compliance',
+      'Third-Party Licenses and Dependencies': 'Disclose all third-party components, licensing obligations, ongoing license costs, and compliance requirements',
+      'Termination and Project Handover Procedures': 'Define termination grounds, work product delivery, code repository access, and final billing reconciliation'
+    },
     advancedComplianceNotes: {
       multiJurisdictionalConsiderations: [
         'GDPR: Data processing terms, privacy by design, DPO requirements',
@@ -4390,6 +4899,40 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Warranties and Disclaimers (appropriate for paid service)',
       'Limitation of Liability (with SLA credit mechanics)'
     ],
+    essentialClauses: [
+      'Service Level Agreements and Response Times',
+      'Scope of Maintenance and Support Services',
+      'Software Updates and Version Management',
+      'Support Channels and Contact Methods',
+      'Incident Severity Classification and Escalation',
+      'Support Hours and Availability Windows',
+      'Problem Resolution and Ticketing Procedures',
+      'Change Management and Implementation',
+      'User Training and Documentation Updates',
+      'Performance Monitoring and Reporting',
+      'Backup and Disaster Recovery Support',
+      'Security Patch Management and Vulnerability Response',
+      'Fees, Payment Terms, and Cost Adjustments',
+      'Term, Renewal, and Termination Procedures',
+      'Service Transition and Knowledge Transfer'
+    ],
+    clauseGuidance: {
+      'Service Level Agreements and Response Times': 'Define specific response time commitments for different severity levels, resolution targets, and measurement methodologies',
+      'Scope of Maintenance and Support Services': 'Clearly delineate included services (bug fixes, patches) versus excluded services (new features, custom development)',
+      'Software Updates and Version Management': 'Specify update delivery schedules, testing procedures, rollback capabilities, and version compatibility support',
+      'Support Channels and Contact Methods': 'Define available support channels (phone, email, portal), contact information, and proper escalation pathways',
+      'Incident Severity Classification and Escalation': 'Establish clear severity level definitions (P1-P4), escalation triggers, and management involvement criteria',
+      'Support Hours and Availability Windows': 'Specify support hours, holiday schedules, emergency support availability, and time zone considerations',
+      'Problem Resolution and Ticketing Procedures': 'Define ticket management systems, status reporting, problem tracking, and resolution documentation requirements',
+      'Change Management and Implementation': 'Establish procedures for implementing fixes, testing requirements, change approval processes, and deployment scheduling',
+      'User Training and Documentation Updates': 'Address training obligations for software changes, documentation maintenance, and knowledge base updates',
+      'Performance Monitoring and Reporting': 'Define performance metrics tracking, regular reporting requirements, and service level compliance measurement',
+      'Backup and Disaster Recovery Support': 'Specify backup assistance, disaster recovery support, and data restoration services within scope',
+      'Security Patch Management and Vulnerability Response': 'Establish security update delivery timelines, vulnerability assessment procedures, and emergency patch deployment',
+      'Fees, Payment Terms, and Cost Adjustments': 'Define fee structures, payment schedules, annual adjustments, and additional service pricing',
+      'Term, Renewal, and Termination Procedures': 'Specify contract duration, automatic renewal conditions, termination notice requirements, and renewal pricing',
+      'Service Transition and Knowledge Transfer': 'Establish procedures for service handover, documentation transfer, and transition assistance upon termination'
+    },
     advancedComplianceNotes: {
       multiJurisdictionalConsiderations: [
         'GDPR: Data processing terms, privacy by design, DPO requirements',
@@ -4414,10 +4957,10 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       ]
     }
   }
-};
+},
 
 // Helper function to get template for a contract type
-export function getContractTemplate(contractType: string): ContractTemplate | undefined {
+export function CONTRACT_TEMPLATES(contractType: string): ContractTemplate | undefined {
   return CONTRACT_TEMPLATES[contractType];
 }
 
@@ -4459,4 +5002,263 @@ ${template.keyReviewPoints.map(point =>
   `- ${point.category}: Check for ${point.mustHave.join(', ')}`
 ).join('\n')}
 `;
+}
+
+// Template matching functions
+export function templateMatcher(userInput: string): TemplateMatch | null {
+  const normalizedInput = userInput.toLowerCase().trim();
+  
+  // 1. Exact match
+  for (const [key, template] of Object.entries(CONTRACT_TEMPLATES)) {
+    if (key.toLowerCase() === normalizedInput) {
+      return {
+        template,
+        matchType: 'exact',
+        score: 1.0,
+        matchedOn: key
+      };
+    }
+  }
+  
+  // 2. Alias match
+  for (const [key, template] of Object.entries(CONTRACT_TEMPLATES)) {
+    if (template.aliases) {
+      for (const alias of template.aliases) {
+        if (alias.toLowerCase() === normalizedInput) {
+          return {
+            template,
+            matchType: 'alias',
+            score: 0.95,
+            matchedOn: alias
+          };
+        }
+      }
+    }
+  }
+  
+  // 3. Industry variation match
+  for (const [key, template] of Object.entries(CONTRACT_TEMPLATES)) {
+    if (template.industryVariations) {
+      for (const variation of template.industryVariations) {
+        if (variation.toLowerCase() === normalizedInput) {
+          return {
+            template,
+            matchType: 'alias',
+            score: 0.9,
+            matchedOn: variation
+          };
+        }
+      }
+    }
+  }
+  
+  // 4. Fuzzy match on template names and aliases
+  const fuzzyMatches: TemplateMatch[] = [];
+  
+  for (const [key, template] of Object.entries(CONTRACT_TEMPLATES)) {
+    // Check main name
+    const nameScore = calculateSimilarityScore(normalizedInput, key.toLowerCase());
+    if (nameScore > 0.6) {
+      fuzzyMatches.push({
+        template,
+        matchType: 'fuzzy',
+        score: nameScore * 0.8, // Reduce score for fuzzy matches
+        matchedOn: key
+      });
+    }
+    
+    // Check aliases
+    if (template.aliases) {
+      for (const alias of template.aliases) {
+        const aliasScore = calculateSimilarityScore(normalizedInput, alias.toLowerCase());
+        if (aliasScore > 0.6) {
+          fuzzyMatches.push({
+            template,
+            matchType: 'fuzzy',
+            score: aliasScore * 0.75,
+            matchedOn: alias
+          });
+        }
+      }
+    }
+  }
+  
+  // 5. Term-based matching
+  for (const [key, template] of Object.entries(CONTRACT_TEMPLATES)) {
+    if (template.keyIdentifyingTerms) {
+      const termScore = calculateTermMatchScore(normalizedInput, template.keyIdentifyingTerms);
+      if (termScore > 0.4) {
+        fuzzyMatches.push({
+          template,
+          matchType: 'terms',
+          score: termScore * 0.6, // Lower score for term-based matches
+          matchedOn: `Terms: ${template.keyIdentifyingTerms.slice(0, 3).join(', ')}`
+        });
+      }
+    }
+  }
+  
+  // Return best match if any
+  if (fuzzyMatches.length > 0) {
+    fuzzyMatches.sort((a, b) => b.score - a.score);
+    return fuzzyMatches[0];
+  }
+  
+  return null;
+}
+
+// Find multiple possible matches for ambiguous inputs
+export function findTemplateMatches(userInput: string, maxResults: number = 3): TemplateMatch[] {
+  const normalizedInput = userInput.toLowerCase().trim();
+  const matches: TemplateMatch[] = [];
+  
+  // Collect all possible matches
+  for (const [key, template] of Object.entries(CONTRACT_TEMPLATES)) {
+    // Exact match
+    if (key.toLowerCase() === normalizedInput) {
+      matches.push({
+        template,
+        matchType: 'exact',
+        score: 1.0,
+        matchedOn: key
+      });
+      continue;
+    }
+    
+    // Alias matches
+    if (template.aliases) {
+      for (const alias of template.aliases) {
+        if (alias.toLowerCase() === normalizedInput) {
+          matches.push({
+            template,
+            matchType: 'alias',
+            score: 0.95,
+            matchedOn: alias
+          });
+          continue;
+        }
+      }
+    }
+    
+    // Fuzzy matches
+    const nameScore = calculateSimilarityScore(normalizedInput, key.toLowerCase());
+    if (nameScore > 0.5) {
+      matches.push({
+        template,
+        matchType: 'fuzzy',
+        score: nameScore * 0.8,
+        matchedOn: key
+      });
+    }
+    
+    // Term-based matches
+    if (template.keyIdentifyingTerms) {
+      const termScore = calculateTermMatchScore(normalizedInput, template.keyIdentifyingTerms);
+      if (termScore > 0.3) {
+        matches.push({
+          template,
+          matchType: 'terms',
+          score: termScore * 0.6,
+          matchedOn: `Terms match`
+        });
+      }
+    }
+  }
+  
+  // Sort by score and return top matches
+  matches.sort((a, b) => b.score - a.score);
+  return matches.slice(0, maxResults);
+}
+
+// Calculate similarity score between two strings
+export function calculateSimilarityScore(str1: string, str2: string): number {
+  // Exact match
+  if (str1 === str2) return 1.0;
+  
+  // Contains match
+  if (str1.includes(str2) || str2.includes(str1)) {
+    const longer = str1.length > str2.length ? str1 : str2;
+    const shorter = str1.length > str2.length ? str2 : str1;
+    return shorter.length / longer.length * 0.9;
+  }
+  
+  // Word overlap
+  const words1 = str1.split(/\s+/).filter(w => w.length > 2);
+  const words2 = str2.split(/\s+/).filter(w => w.length > 2);
+  
+  if (words1.length === 0 || words2.length === 0) return 0;
+  
+  const commonWords = words1.filter(word => words2.includes(word));
+  const wordOverlap = commonWords.length / Math.max(words1.length, words2.length);
+  
+  if (wordOverlap > 0.5) return wordOverlap * 0.8;
+  
+  // Levenshtein distance for character-level similarity
+  const distance = levenshteinDistance(str1, str2);
+  const maxLen = Math.max(str1.length, str2.length);
+  const similarity = 1 - (distance / maxLen);
+  
+  return Math.max(0, similarity);
+}
+
+// Calculate how well input matches key identifying terms
+function calculateTermMatchScore(input: string, terms: string[]): number {
+  const inputWords = input.toLowerCase().split(/\s+/);
+  let matchedTerms = 0;
+  
+  for (const term of terms) {
+    const termLower = term.toLowerCase();
+    
+    // Direct word match
+    if (inputWords.includes(termLower)) {
+      matchedTerms += 1;
+    }
+    // Partial word match
+    else if (inputWords.some(word => word.includes(termLower) || termLower.includes(word))) {
+      matchedTerms += 0.5;
+    }
+    // Input contains term
+    else if (input.includes(termLower)) {
+      matchedTerms += 0.3;
+    }
+  }
+  
+  return matchedTerms / terms.length;
+}
+
+// Levenshtein distance calculation
+function levenshteinDistance(str1: string, str2: string): number {
+  const m = str1.length;
+  const n = str2.length;
+  const dp: number[][] = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+  
+  for (let i = 0; i <= m; i++) dp[i][0] = i;
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+  
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      if (str1[i - 1] === str2[j - 1]) {
+        dp[i][j] = dp[i - 1][j - 1];
+      } else {
+        dp[i][j] = Math.min(
+          dp[i - 1][j] + 1,     // deletion
+          dp[i][j - 1] + 1,     // insertion
+          dp[i - 1][j - 1] + 1  // substitution
+        );
+      }
+    }
+  }
+  
+  return dp[m][n];
+}
+
+// Enhanced template getter that uses fuzzy matching
+export function getContractTemplateWithMatching(contractType: string): ContractTemplate | null {
+  // First try exact match
+  const exactMatch = getContractTemplate(contractType);
+  if (exactMatch) return exactMatch;
+  
+  // Then try fuzzy matching
+  const match = templateMatcher(contractType);
+  return match?.template || null;
 }

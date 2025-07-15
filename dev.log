@@ -1,23 +1,248 @@
 
 > contract-analyzer@0.1.0 dev
-> next dev --turbopack
+> next dev -p 3001
 
-   ▲ Next.js 15.3.5 (Turbopack)
-   - Local:        http://localhost:3000
-   - Network:      http://192.168.0.25:3000
+   ▲ Next.js 15.3.5
+   - Local:        http://localhost:3001
+   - Network:      http://10.10.41.10:3001
 
  ✓ Starting...
- ✓ Ready in 863ms
+ ✓ Ready in 1260ms
  ○ Compiling / ...
- ✓ Compiled / in 1720ms
- GET / 200 in 1933ms
- ○ Compiling /api/analyze ...
- ✓ Compiled /api/analyze in 1734ms
-Processing file: test-contract.txt, type: text/plain
-Extracted 3552 characters from test-contract.txt
+ ✓ Compiled / in 3.2s (1098 modules)
+ GET / 200 in 3374ms
+ ✓ Compiled in 182ms (511 modules)
+ GET / 200 in 32ms
+ GET / 200 in 18ms
+ GET / 200 in 41ms
+ GET / 200 in 53ms
+ ○ Compiling /api/detect-contract-type ...
+ ✓ Compiled /api/detect-contract-type in 1799ms (1503 modules)
+Processing file: data processing agreement.docx, type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+Processing file: data processing agreement.docx, type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+Successfully extracted 19406 characters from Word document
+Successfully extracted 19406 characters from Word document
+ POST /api/detect-contract-type 200 in 2071ms
+ POST /api/detect-contract-type 200 in 2076ms
+ ✓ Compiled /api/extract-parties in 241ms (1505 modules)
+Extracting parties from Data Processing Agreement: Data Processing Agreement.docx
+Processing file: data processing agreement.docx, type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+Extracting parties from Data Processing Agreement: Data Processing Agreement.docx
+Processing file: data processing agreement.docx, type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+Successfully extracted 19406 characters from Word document
+Successfully extracted 19406 characters from Word document
+Expected roles for Data Processing Agreement: [ 'Party A', 'Party B' ]
+No Claude API key, using advanced regex extraction
+Party extraction error: TypeError: String.prototype.matchAll called with a non-global RegExp argument
+    at String.matchAll (<anonymous>)
+    at extractPartiesAdvanced (src/app/api/extract-parties/route.ts:175:25)
+    at POST (src/app/api/extract-parties/route.ts:434:28)
+  173 |   
+  174 |   for (const pattern of partyPatterns) {
+> 175 |     const matches = text.matchAll(pattern);
+      |                         ^
+  176 |     for (const match of matches) {
+  177 |       for (let i = 1; i < match.length; i++) {
+  178 |         if (match[i]) {
+Expected roles for Data Processing Agreement: [ 'Party A', 'Party B' ]
+No Claude API key, using advanced regex extraction
+Party extraction error: TypeError: String.prototype.matchAll called with a non-global RegExp argument
+    at String.matchAll (<anonymous>)
+    at extractPartiesAdvanced (src/app/api/extract-parties/route.ts:175:25)
+    at POST (src/app/api/extract-parties/route.ts:434:28)
+  173 |   
+  174 |   for (const pattern of partyPatterns) {
+> 175 |     const matches = text.matchAll(pattern);
+      |                         ^
+  176 |     for (const match of matches) {
+  177 |       for (let i = 1; i < match.length; i++) {
+  178 |         if (match[i]) {
+ POST /api/extract-parties 500 in 533ms
+ POST /api/extract-parties 500 in 537ms
+ ✓ Compiled /api/analyze in 146ms (1507 modules)
+Starting contract analysis...
+Extracted parties: { 'Party A': 'a', 'Party B': 'b' }
+Processing file: Data Processing Agreement.docx, type: text/plain
+Contract Type: Data Processing Agreement, Party Role: Party A
+Processing file: data processing agreement.docx, type: text/plain
+Extracted 20851 characters from Data Processing Agreement.docx
 No Anthropic API key found, using mock analysis
- POST /api/analyze 200 in 2219ms
-Processing file: test-contract.txt, type: text/plain
-Extracted 3552 characters from test-contract.txt
+ POST /api/analyze 200 in 198ms
+ GET / 200 in 135ms
+ ✓ Compiled /favicon.ico in 97ms (1011 modules)
+ GET /favicon.ico 200 in 113ms
+Processing file: cloud-services-agreement.pdf, type: application/pdf
+PDF parsing error: Error: ENOENT: no such file or directory, open './test/data/05-versions-space.pdf'
+    at __webpack_require__ (.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__.t (.next/server/webpack-runtime.js:78:38)
+    at async parsePDF (src/lib/document-parser.ts:6:16)
+    at async extractTextFromFile (src/lib/document-parser.ts:92:19)
+    at async POST (src/app/api/detect-contract-type/route.ts:142:17)
+  4 | async function parsePDF(buffer: Buffer): Promise<string> {
+  5 |   try {
+> 6 |     const pdf = await import('pdf-parse');
+    |                ^
+  7 |     const data = await pdf.default(buffer);
+  8 |     return data.text;
+  9 |   } catch (error) { {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: './test/data/05-versions-space.pdf'
+}
+Error extracting text: Error: Failed to parse PDF file
+    at parsePDF (src/lib/document-parser.ts:11:10)
+    at async extractTextFromFile (src/lib/document-parser.ts:92:19)
+    at async POST (src/app/api/detect-contract-type/route.ts:142:17)
+   9 |   } catch (error) {
+  10 |     console.error('PDF parsing error:', error);
+> 11 |     throw new Error('Failed to parse PDF file');
+     |          ^
+  12 |   }
+  13 | }
+  14 |
+Contract type detection error: Error: Failed to extract text from cloud-services-agreement.pdf: Failed to parse PDF file
+    at extractTextFromFile (src/lib/document-parser.ts:116:10)
+    at async POST (src/app/api/detect-contract-type/route.ts:142:17)
+  114 |   } catch (error) {
+  115 |     console.error('Error extracting text:', error);
+> 116 |     throw new Error(`Failed to extract text from ${file.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      |          ^
+  117 |   }
+  118 | }
+  119 |
+ POST /api/detect-contract-type 500 in 315ms
+Processing file: cloud-services-agreement.pdf, type: application/pdf
+PDF parsing error: Error: ENOENT: no such file or directory, open './test/data/05-versions-space.pdf'
+    at __webpack_require__ (.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__.t (.next/server/webpack-runtime.js:78:38)
+    at async parsePDF (src/lib/document-parser.ts:6:16)
+    at async extractTextFromFile (src/lib/document-parser.ts:92:19)
+    at async POST (src/app/api/detect-contract-type/route.ts:142:17)
+  4 | async function parsePDF(buffer: Buffer): Promise<string> {
+  5 |   try {
+> 6 |     const pdf = await import('pdf-parse');
+    |                ^
+  7 |     const data = await pdf.default(buffer);
+  8 |     return data.text;
+  9 |   } catch (error) { {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: './test/data/05-versions-space.pdf'
+}
+Error extracting text: Error: Failed to parse PDF file
+    at parsePDF (src/lib/document-parser.ts:11:10)
+    at async extractTextFromFile (src/lib/document-parser.ts:92:19)
+    at async POST (src/app/api/detect-contract-type/route.ts:142:17)
+   9 |   } catch (error) {
+  10 |     console.error('PDF parsing error:', error);
+> 11 |     throw new Error('Failed to parse PDF file');
+     |          ^
+  12 |   }
+  13 | }
+  14 |
+Contract type detection error: Error: Failed to extract text from cloud-services-agreement.pdf: Failed to parse PDF file
+    at extractTextFromFile (src/lib/document-parser.ts:116:10)
+    at async POST (src/app/api/detect-contract-type/route.ts:142:17)
+  114 |   } catch (error) {
+  115 |     console.error('Error extracting text:', error);
+> 116 |     throw new Error(`Failed to extract text from ${file.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      |          ^
+  117 |   }
+  118 | }
+  119 |
+ POST /api/detect-contract-type 500 in 377ms
+Extracting parties from Cloud Services Agreement: cloud-services-agreement.pdf
+Processing file: cloud-services-agreement.pdf, type: application/pdf
+PDF parsing error: Error: ENOENT: no such file or directory, open './test/data/05-versions-space.pdf'
+    at __webpack_require__ (.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__.t (.next/server/webpack-runtime.js:78:38)
+    at async parsePDF (src/lib/document-parser.ts:6:16)
+    at async extractTextFromFile (src/lib/document-parser.ts:92:19)
+    at async POST (src/app/api/extract-parties/route.ts:282:17)
+  4 | async function parsePDF(buffer: Buffer): Promise<string> {
+  5 |   try {
+> 6 |     const pdf = await import('pdf-parse');
+    |                ^
+  7 |     const data = await pdf.default(buffer);
+  8 |     return data.text;
+  9 |   } catch (error) { {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: './test/data/05-versions-space.pdf'
+}
+Error extracting text: Error: Failed to parse PDF file
+    at parsePDF (src/lib/document-parser.ts:11:10)
+    at async extractTextFromFile (src/lib/document-parser.ts:92:19)
+    at async POST (src/app/api/extract-parties/route.ts:282:17)
+   9 |   } catch (error) {
+  10 |     console.error('PDF parsing error:', error);
+> 11 |     throw new Error('Failed to parse PDF file');
+     |          ^
+  12 |   }
+  13 | }
+  14 |
+Party extraction error: Error: Failed to extract text from cloud-services-agreement.pdf: Failed to parse PDF file
+    at extractTextFromFile (src/lib/document-parser.ts:116:10)
+    at async POST (src/app/api/extract-parties/route.ts:282:17)
+  114 |   } catch (error) {
+  115 |     console.error('Error extracting text:', error);
+> 116 |     throw new Error(`Failed to extract text from ${file.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      |          ^
+  117 |   }
+  118 | }
+  119 |
+ POST /api/extract-parties 500 in 106ms
+Extracting parties from Cloud Services Agreement: cloud-services-agreement.pdf
+Processing file: cloud-services-agreement.pdf, type: application/pdf
+PDF parsing error: Error: ENOENT: no such file or directory, open './test/data/05-versions-space.pdf'
+    at __webpack_require__ (.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__.t (.next/server/webpack-runtime.js:78:38)
+    at async parsePDF (src/lib/document-parser.ts:6:16)
+    at async extractTextFromFile (src/lib/document-parser.ts:92:19)
+    at async POST (src/app/api/extract-parties/route.ts:282:17)
+  4 | async function parsePDF(buffer: Buffer): Promise<string> {
+  5 |   try {
+> 6 |     const pdf = await import('pdf-parse');
+    |                ^
+  7 |     const data = await pdf.default(buffer);
+  8 |     return data.text;
+  9 |   } catch (error) { {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: './test/data/05-versions-space.pdf'
+}
+Error extracting text: Error: Failed to parse PDF file
+    at parsePDF (src/lib/document-parser.ts:11:10)
+    at async extractTextFromFile (src/lib/document-parser.ts:92:19)
+    at async POST (src/app/api/extract-parties/route.ts:282:17)
+   9 |   } catch (error) {
+  10 |     console.error('PDF parsing error:', error);
+> 11 |     throw new Error('Failed to parse PDF file');
+     |          ^
+  12 |   }
+  13 | }
+  14 |
+Party extraction error: Error: Failed to extract text from cloud-services-agreement.pdf: Failed to parse PDF file
+    at extractTextFromFile (src/lib/document-parser.ts:116:10)
+    at async POST (src/app/api/extract-parties/route.ts:282:17)
+  114 |   } catch (error) {
+  115 |     console.error('Error extracting text:', error);
+> 116 |     throw new Error(`Failed to extract text from ${file.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      |          ^
+  117 |   }
+  118 | }
+  119 |
+ POST /api/extract-parties 500 in 165ms
+Starting contract analysis...
+Extracted parties: { Customer: 'a', 'Cloud Provider': 'b' }
+Processing file: cloud-services-agreement.pdf, type: text/plain
+Contract Type: Cloud Services Agreement, Party Role: Customer
+Processing file: cloud-services-agreement.pdf, type: text/plain
+Extracted 256158 characters from cloud-services-agreement.pdf
 No Anthropic API key found, using mock analysis
- POST /api/analyze 200 in 325ms
+ POST /api/analyze 200 in 60ms
+[?25h

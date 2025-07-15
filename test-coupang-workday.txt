@@ -1,0 +1,30 @@
+SERVICE AGREEMENT
+
+This Service Agreement ("Agreement") is entered into between Coupang Corp. ("Client") and Workday Inc. ("Service Provider").
+
+1. SCOPE OF SERVICES
+Service Provider shall provide cloud-based HR and financial management services to Client as described in Exhibit A.
+
+2. PAYMENT TERMS
+Client agrees to pay Service Provider $500,000 annually. Payment due NET 30 days after invoice.
+
+3. SERVICE LEVEL AGREEMENT
+Service Provider guarantees 99% uptime. Credits apply for downtime exceeding this threshold.
+
+4. DATA SECURITY
+Service Provider shall maintain industry-standard security measures for all Client data.
+
+5. CONFIDENTIALITY
+Both parties agree to maintain confidentiality of all proprietary information shared during this engagement.
+
+6. TERM
+This agreement shall commence on January 1, 2024 and continue for a period of three (3) years.
+
+7. TERMINATION
+Either party may terminate with 90 days written notice.
+
+8. GOVERNING LAW
+This agreement shall be governed by the laws of California.
+
+9. ENTIRE AGREEMENT
+This agreement constitutes the entire agreement between the parties.

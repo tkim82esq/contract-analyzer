@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 interface ExportButtonProps {
   contractType: string;
@@ -9,25 +9,30 @@ interface ExportButtonProps {
   analysisData: any;
 }
 
-export default function ExportButton({ contractType, partyRole, fileName, analysisData }: ExportButtonProps) {
+export default function ExportButton({
+  contractType,
+  partyRole,
+  fileName,
+  analysisData,
+}: ExportButtonProps) {
   const [exporting, setExporting] = useState(false);
 
   const generatePDF = async () => {
     setExporting(true);
-    
+
     try {
       // Dynamic imports to avoid SSR issues
-      const jsPDF = (await import('jspdf')).default;
-      const html2canvas = (await import('html2canvas')).default;
-      
+      const jsPDF = (await import("jspdf")).default;
+      const html2canvas = (await import("html2canvas")).default;
+
       // Create a temporary div with the report content
-      const reportDiv = document.createElement('div');
-      reportDiv.style.position = 'absolute';
-      reportDiv.style.left = '-9999px';
-      reportDiv.style.width = '800px';
-      reportDiv.style.padding = '40px';
-      reportDiv.style.backgroundColor = 'white';
-      
+      const reportDiv = document.createElement("div");
+      reportDiv.style.position = "absolute";
+      reportDiv.style.left = "-9999px";
+      reportDiv.style.width = "800px";
+      reportDiv.style.padding = "40px";
+      reportDiv.style.backgroundColor = "white";
+
       // Generate report HTML
       reportDiv.innerHTML = `
         <div style="font-family: Arial, sans-serif;">
@@ -57,13 +62,15 @@ export default function ExportButton({ contractType, partyRole, fileName, analys
           </div>
           
           <h2 style="color: #2d3748; margin-bottom: 15px;">Detailed Risk Analysis</h2>
-          ${analysisData.risks.map((risk: any, index: number) => `
+          ${analysisData.risks
+            .map(
+              (risk: any, index: number) => `
             <div style="margin-bottom: 25px; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
               <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
                 <h3 style="color: #1a202c; margin: 0;">${index + 1}. ${risk.title}</h3>
                 <span style="
-                  background-color: ${risk.severity === 'high' ? '#fee2e2' : risk.severity === 'medium' ? '#fef3c7' : '#d1fae5'};
-                  color: ${risk.severity === 'high' ? '#991b1b' : risk.severity === 'medium' ? '#92400e' : '#065f46'};
+                  background-color: ${risk.severity === "high" ? "#fee2e2" : risk.severity === "medium" ? "#fef3c7" : "#d1fae5"};
+                  color: ${risk.severity === "high" ? "#991b1b" : risk.severity === "medium" ? "#92400e" : "#065f46"};
                   padding: 4px 12px;
                   border-radius: 4px;
                   font-size: 14px;
@@ -77,7 +84,9 @@ export default function ExportButton({ contractType, partyRole, fileName, analys
                 <p style="color: #1e40af; margin: 5px 0 0 0;">${risk.recommendation}</p>
               </div>
             </div>
-          `).join('')}
+          `,
+            )
+            .join("")}
           
           <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
             <p style="color: #6b7280; font-size: 14px;">
@@ -87,62 +96,61 @@ export default function ExportButton({ contractType, partyRole, fileName, analys
           </div>
         </div>
       `;
-      
+
       document.body.appendChild(reportDiv);
-      
+
       // Convert HTML to canvas
       const canvas = await html2canvas(reportDiv, {
         logging: false,
-        useCORS: true
+        useCORS: true,
       });
-      
+
       // Calculate PDF dimensions
       const imgWidth = 210; // A4 width in mm
       const pageHeight = 297; // A4 height in mm
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       let heightLeft = imgHeight;
-      
+
       // Create PDF
-      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdf = new jsPDF("p", "mm", "a4");
       let position = 0;
-      
+
       // Add first page
       pdf.addImage(
-        canvas.toDataURL('image/png'),
-        'PNG',
+        canvas.toDataURL("image/png"),
+        "PNG",
         0,
         position,
         imgWidth,
-        imgHeight
+        imgHeight,
       );
       heightLeft -= pageHeight;
-      
+
       // Add additional pages if needed
       while (heightLeft >= 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
         pdf.addImage(
-          canvas.toDataURL('image/png'),
-          'PNG',
+          canvas.toDataURL("image/png"),
+          "PNG",
           0,
           position,
           imgWidth,
-          imgHeight
+          imgHeight,
         );
         heightLeft -= pageHeight;
       }
-      
+
       // Clean up
       document.body.removeChild(reportDiv);
-      
+
       // Save the PDF
-      const date = new Date().toISOString().split('T')[0];
-      const filename = `Contract_Risk_Analysis_${contractType.replace(/\s+/g, '_')}_${date}.pdf`;
+      const date = new Date().toISOString().split("T")[0];
+      const filename = `Contract_Risk_Analysis_${contractType.replace(/\s+/g, "_")}_${date}.pdf`;
       pdf.save(filename);
-      
     } catch (error) {
-      console.error('PDF generation error:', error);
-      alert('Failed to generate PDF. Please try again.');
+      console.error("PDF generation error:", error);
+      alert("Failed to generate PDF. Please try again.");
     } finally {
       setExporting(false);
     }
@@ -153,15 +161,25 @@ export default function ExportButton({ contractType, partyRole, fileName, analys
       onClick={generatePDF}
       disabled={exporting}
       className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-        exporting 
-          ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-          : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+        exporting
+          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+          : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
       }`}
     >
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      <svg
+        className="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+        />
       </svg>
-      {exporting ? 'Generating PDF...' : 'Export as PDF'}
+      {exporting ? "Generating PDF..." : "Export as PDF"}
     </button>
   );
 }

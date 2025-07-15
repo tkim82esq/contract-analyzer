@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 interface FileUploadProps {
   onFileUploaded: (file: File) => void;
@@ -42,25 +42,27 @@ export default function FileUpload({ onFileUploaded }: FileUploadProps) {
     // Check file size first
     const maxSize = 10 * 1024 * 1024; // 10MB
     if (file.size > maxSize) {
-      alert('File is too large. Please upload a file smaller than 10MB.');
+      alert("File is too large. Please upload a file smaller than 10MB.");
       return;
     }
-    
+
     // Check if file is a document
     const validTypes = [
-      'application/pdf', 
-      'application/msword', 
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'text/plain'
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain",
     ];
-    
-    const validExtensions = ['.pdf', '.doc', '.docx', '.txt'];
-    const hasValidExtension = validExtensions.some(ext => 
-      file.name.toLowerCase().endsWith(ext)
+
+    const validExtensions = [".pdf", ".doc", ".docx", ".txt"];
+    const hasValidExtension = validExtensions.some((ext) =>
+      file.name.toLowerCase().endsWith(ext),
     );
-    
+
     if (!validTypes.includes(file.type) && !hasValidExtension) {
-      alert('Please upload a PDF, Word document (.doc, .docx), or text file (.txt)');
+      alert(
+        "Please upload a PDF, Word document (.doc, .docx), or text file (.txt)",
+      );
       return;
     }
 
@@ -72,7 +74,7 @@ export default function FileUpload({ onFileUploaded }: FileUploadProps) {
     if (!file) return;
 
     setUploading(true);
-    
+
     // Simulate upload delay
     setTimeout(() => {
       setUploading(false);
@@ -84,7 +86,9 @@ export default function FileUpload({ onFileUploaded }: FileUploadProps) {
     <div className="w-full max-w-2xl mx-auto">
       <div
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-          dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
+          dragActive
+            ? "border-blue-500 bg-blue-50"
+            : "border-gray-300 hover:border-gray-400"
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -98,11 +102,8 @@ export default function FileUpload({ onFileUploaded }: FileUploadProps) {
           onChange={handleChange}
           accept=".pdf,.doc,.docx,.txt"
         />
-        
-        <label
-          htmlFor="file-upload"
-          className="cursor-pointer"
-        >
+
+        <label htmlFor="file-upload" className="cursor-pointer">
           <svg
             className="mx-auto h-12 w-12 text-gray-400"
             stroke="currentColor"
@@ -116,11 +117,11 @@ export default function FileUpload({ onFileUploaded }: FileUploadProps) {
               strokeLinejoin="round"
             />
           </svg>
-          
+
           <p className="mt-2 text-sm text-gray-600">
             <span className="font-semibold text-blue-600 hover:text-blue-500">
               Click to upload
-            </span>{' '}
+            </span>{" "}
             or drag and drop
           </p>
           <p className="text-xs text-gray-500">
@@ -151,7 +152,7 @@ export default function FileUpload({ onFileUploaded }: FileUploadProps) {
                 </p>
               </div>
             </div>
-            
+
             <button
               onClick={() => setFile(null)}
               className="text-red-500 hover:text-red-700"
@@ -165,17 +166,17 @@ export default function FileUpload({ onFileUploaded }: FileUploadProps) {
               </svg>
             </button>
           </div>
-          
+
           <button
             onClick={handleUpload}
             disabled={uploading}
             className={`mt-4 w-full py-2 px-4 rounded-md text-white font-medium transition-colors ${
-              uploading 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-blue-600 hover:bg-blue-700'
+              uploading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
-            {uploading ? 'Uploading...' : 'Upload and Analyze'}
+            {uploading ? "Uploading..." : "Upload and Analyze"}
           </button>
         </div>
       )}

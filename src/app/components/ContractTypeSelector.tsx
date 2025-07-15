@@ -93,54 +93,35 @@ const CONTRACT_TYPES = [
   },
 ];
 
-interface PartySelectorProps {
-  contractType: string;
-  onSelectionComplete: (party: string) => void;
+interface ContractTypeSelectorProps {
+  onContractTypeSelected: (contractType: string) => void;
 }
 
-export default function PartySelector({
-  contractType,
-  onSelectionComplete,
-}: PartySelectorProps) {
-  const handlePartySelect = (party: string) => {
-    onSelectionComplete(party);
+export default function ContractTypeSelector({
+  onContractTypeSelected,
+}: ContractTypeSelectorProps) {
+  const handleTypeSelect = (type: string) => {
+    onContractTypeSelected(type);
   };
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-        Which party are you in this {contractType}?
+      <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+        What type of contract is this?
       </h2>
-      <p className="text-gray-600 mb-6">
-        This helps us analyze risks from your perspective
-      </p>
-
       <div className="grid gap-3">
-        {CONTRACT_TYPES.find((t) => t.name === contractType)?.parties.map(
-          (party) => (
-            <button
-              key={party}
-              onClick={() => handlePartySelect(party)}
-              className="text-left p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200 hover:border-blue-500"
-            >
-              <span className="font-medium text-gray-900 text-lg">{party}</span>
-              {party ===
-                CONTRACT_TYPES.find((t) => t.name === contractType)
-                  ?.parties[0] && (
-                <p className="text-sm text-gray-500 mt-1">
-                  Typically the party offering or providing something
-                </p>
-              )}
-              {party ===
-                CONTRACT_TYPES.find((t) => t.name === contractType)
-                  ?.parties[1] && (
-                <p className="text-sm text-gray-500 mt-1">
-                  Typically the party receiving or purchasing something
-                </p>
-              )}
-            </button>
-          ),
-        )}
+        {CONTRACT_TYPES.map((type) => (
+          <button
+            key={type.name}
+            onClick={() => handleTypeSelect(type.name)}
+            className="text-left p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200 hover:border-blue-500"
+          >
+            <span className="font-medium text-gray-900">{type.name}</span>
+            <p className="text-sm text-gray-500 mt-1">
+              Parties: {type.parties.join(" / ")}
+            </p>
+          </button>
+        ))}
       </div>
     </div>
   );

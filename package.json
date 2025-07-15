@@ -3,7 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev -p 3001",
+    "dev:clean": "lsof -ti:3000 | xargs kill -9 2>/dev/null || true && rm -rf .next && npm run dev",
+    "dev:force": "next dev -p 3002",
+    "dev:debug": "NODE_OPTIONS='--inspect' next dev -p 3001",
+    "dev:verbose": "DEBUG=* next dev -p 3001",
+    "port:check": "lsof -i :3000 && lsof -i :3001 && lsof -i :3002 || echo 'All ports are free'",
+    "port:kill": "lsof -ti:3000,3001,3002 | xargs kill -9 2>/dev/null || echo 'No processes to kill'",
+    "cache:clear": "rm -rf .next && npm cache clean --force",
+    "health:check": "node -e \"console.log('Node:', process.version); console.log('Memory:', Math.round(process.memoryUsage().heapUsed / 1024 / 1024) + 'MB'); console.log('Platform:', process.platform);\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -16,7 +24,7 @@
     "jspdf": "^3.0.1",
     "mammoth": "^1.9.1",
     "next": "15.3.5",
-    "pdf-parse": "^1.1.1",
+    "pdf-parse-new": "^1.4.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

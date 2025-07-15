@@ -1,0 +1,70 @@
+{
+  "risks": [
+    {
+      "title": "Developer Retains All Intellectual Property Rights",
+      "category": "Intellectual Property",
+      "severity": "high",
+      "description": "Section 3 states that all work product, including source code, designs, and derivative works, shall be owned exclusively by Developer, with Client receiving only a limited license. For a Client paying $100,000 for custom software development, this means you're essentially renting access to software you funded rather than owning it. This creates vendor lock-in where you cannot modify, enhance, or transfer the software without Developer's permission. Industry standard practice is for clients to own work product they commission and pay for. If the relationship with Developer sours or they go out of business, you could lose access to critical business software that cost $100,000 to develop, forcing expensive redevelopment with another vendor.",
+      "recommendation": "Negotiate for full IP ownership transfer upon final payment, or at minimum ensure perpetual, irrevocable license with right to modify and create derivative works. Include source code escrow provisions.",
+      "clauseLocation": "Section 3",
+      "relatedText": "All work product, including source code, designs, and any improvements or derivative works, shall be owned exclusively by Developer. Client receives a limited license to use the software.",
+      "templateSource": "IP ownership red flag"
+    },
+    {
+      "title": "Complete Warranty Disclaimer Leaves Client Unprotected",
+      "category": "Warranties and Support",
+      "severity": "high",
+      "description": "Section 4 provides no warranties of any kind, with software delivered 'AS IS' without warranty of merchantability or fitness for purpose. For a $100,000 custom software project, this means if the delivered software doesn't work, has security vulnerabilities, or fails to meet basic functionality requirements, you have no legal recourse. Standard software development contracts include warranties that the code will perform as specified and be free from material defects for 90+ days. Without warranties, you're paying $100,000 for software that might not function at all, and Developer has no obligation to fix critical bugs or security issues that could expose your business data or disrupt operations.",
+      "recommendation": "Require standard software warranties including functionality, security, and fitness for intended purpose with minimum 90-day warranty period and free bug fixes for material defects.",
+      "clauseLocation": "Section 4",
+      "relatedText": "DEVELOPER PROVIDES NO WARRANTIES OF ANY KIND. SOFTWARE IS PROVIDED 'AS IS' WITHOUT WARRANTY OF MERCHANTABILITY OR FITNESS FOR ANY PURPOSE.",
+      "templateSource": "Warranty disclaimer pattern"
+    },
+    {
+      "title": "Unlimited Developer Liability Creates False Security",
+      "category": "Liability and Indemnification",
+      "severity": "medium",
+      "description": "Section 5 states Developer's liability shall be unlimited for any damages or claims. While this appears favorable to Client, it's likely unenforceable and creates false security. Most developers carry limited professional liability insurance (typically $1-5M), and a small development firm cannot realistically cover massive damages. If serious issues arise causing significant business losses, you may win a judgment but be unable to collect meaningful compensation. Industry practice is mutual liability caps at contract value or annual fees. The unlimited liability clause may actually indicate the Developer doesn't understand legal risk allocation, suggesting less sophisticated contract management that could signal other business risks.",
+      "recommendation": "Replace with reasonable mutual liability caps and require Developer to carry adequate professional liability insurance with Client named as additional insured.",
+      "clauseLocation": "Section 5",
+      "relatedText": "Developer's liability shall be unlimited for any damages, losses, or claims arising from this agreement.",
+      "templateSource": "Unlimited liability pattern"
+    },
+    {
+      "title": "Unilateral Scope Changes Allow Cost Overruns",
+      "category": "Payment Terms",
+      "severity": "medium",
+      "description": "Section 7 allows Developer to modify scope of work at any time with additional charges applying to any Client-requested changes. This creates an asymmetric change management system where Developer can expand scope (and costs) unilaterally while Client changes trigger additional fees. For a fixed $100,000 project, this could result in significant cost overruns if Developer claims expanded scope justification. Standard practice requires mutual agreement on scope changes with defined change order processes. Without scope change controls, your $100,000 project could balloon to $150,000+ if Developer interprets requirements expansively or claims additional work is needed that wasn't originally specified.",
+      "recommendation": "Require mutual written approval for all scope changes with detailed change order process. Cap total changes at 20% of original contract value without new contract negotiation.",
+      "clauseLocation": "Section 7",
+      "relatedText": "Developer may modify the scope of work at any time. Additional charges will apply for any changes requested by Client.",
+      "templateSource": "Unilateral modification pattern"
+    },
+    {
+      "title": "Immediate Termination Without Notice Risks Project Loss",
+      "category": "Termination",
+      "severity": "medium",
+      "description": "Section 6 allows either party to terminate without notice, with Client forfeiting all payments made upon termination. For a $100,000 project with milestone payments, this means if the project is 80% complete and terminated, you lose all prior payments without receiving deliverables or source code. Industry standard includes graduated termination rights with payment for work completed and delivery of work product to date. Without notice requirements, Developer could terminate immediately during critical project phases, leaving you without functional software despite significant payments made. The payment forfeiture clause essentially penalizes the Client for any termination, even if Developer fails to perform adequately.",
+      "recommendation": "Require 30-day termination notice with payment only for work completed and delivered. Remove payment forfeiture clause and ensure work product delivery upon termination for convenience.",
+      "clauseLocation": "Section 6",
+      "relatedText": "Either party may terminate this agreement at any time without notice. Upon termination, Client forfeits all payments made.",
+      "templateSource": "Immediate termination pattern"
+    }
+  ],
+  "templateAnalysis": {
+    "coveredReviewPoints": ["Payment Terms", "Intellectual Property"],
+    "identifiedRedFlags": [
+      "IP ownership issues",
+      "warranty disclaimers",
+      "unlimited liability",
+      "unilateral modifications",
+      "immediate termination"
+    ],
+    "missingClauses": [
+      "Detailed scope specifications",
+      "Milestone definitions",
+      "Support obligations",
+      "Performance guarantees"
+    ]
+  }
+}

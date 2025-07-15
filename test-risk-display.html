@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Risk Display Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 p-8">
+    <div class="max-w-5xl mx-auto">
+      <h1 class="text-2xl font-bold mb-4">Risk Display Test</h1>
+
+      <!-- Example Risk Card -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+        <div class="p-6 border-l-4 border-red-500">
+          <!-- Risk Header -->
+          <div class="flex items-start justify-between mb-6">
+            <div class="flex items-start">
+              <div
+                class="p-2 rounded-lg mr-3 flex-shrink-0 bg-red-100 text-red-800 border-red-200"
+              >
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <h4 class="text-lg font-semibold text-gray-900 leading-tight">
+                  Extended Payment Terms
+                </h4>
+                <p class="text-sm text-gray-600 mt-1">Payment Terms</p>
+              </div>
+            </div>
+            <span
+              class="px-3 py-1 text-sm font-medium rounded-full flex-shrink-0 ml-4 bg-red-100 text-red-800 border-red-200"
+            >
+              HIGH
+            </span>
+          </div>
+
+          <!-- Risk Details -->
+          <div class="ml-11">
+            <div class="prose prose-gray max-w-none">
+              <p
+                class="text-gray-700 leading-relaxed text-base mb-4 whitespace-pre-line"
+              >
+                The payment terms require NET 90 payment, meaning you won't
+                receive payment for three months after invoicing. For a Service
+                Provider, this creates severe cash flow pressure, forcing you to
+                fund three months of operational expenses before seeing revenue.
+                Industry standard is NET 30, so this triples your working
+                capital requirements. If you have multiple clients on similar
+                terms, you could face bankruptcy despite profitable contracts.
+                Small agencies have failed simply from cash flow timing when
+                clients delay payments beyond even these extended terms.
+              </p>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+              <p class="text-sm font-semibold text-blue-900 mb-2">
+                Recommendation:
+              </p>
+              <p class="text-sm text-blue-800 leading-relaxed">
+                Negotiate to change payment terms to NET 30 or shorter. Request
+                milestone-based payments to improve cash flow. Consider
+                requiring partial upfront payment or requesting a retainer to
+                reduce cash flow risk.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example Medium Risk -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+        <div class="p-6 border-l-4 border-yellow-500">
+          <!-- Risk Header -->
+          <div class="flex items-start justify-between mb-6">
+            <div class="flex items-start">
+              <div
+                class="p-2 rounded-lg mr-3 flex-shrink-0 bg-yellow-100 text-yellow-800 border-yellow-200"
+              >
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <h4 class="text-lg font-semibold text-gray-900 leading-tight">
+                  Ambiguous Payment Terms
+                </h4>
+                <p class="text-sm text-gray-600 mt-1">Payment Terms</p>
+              </div>
+            </div>
+            <span
+              class="px-3 py-1 text-sm font-medium rounded-full flex-shrink-0 ml-4 bg-yellow-100 text-yellow-800 border-yellow-200"
+            >
+              MEDIUM
+            </span>
+          </div>
+
+          <!-- Risk Details -->
+          <div class="ml-11">
+            <div class="prose prose-gray max-w-none">
+              <p
+                class="text-gray-700 leading-relaxed text-base mb-4 whitespace-pre-line"
+              >
+                The contract states payment is due "upon satisfactory
+                completion" without defining what constitutes satisfactory work
+                or who determines acceptance. This vague language gives the
+                client unlimited discretion to delay or refuse payment based on
+                subjective criteria. In consulting projects, such ambiguous
+                payment terms have led to disputes where clients withhold
+                payment for months, claiming work doesn't meet undefined
+                standards. For a service provider operating on tight cash flow,
+                this could mean waiting 6+ months for payment on completed work,
+                potentially forcing you to pursue expensive legal action to
+                collect what you're owed.
+              </p>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+              <p class="text-sm font-semibold text-blue-900 mb-2">
+                Recommendation:
+              </p>
+              <p class="text-sm text-blue-800 leading-relaxed">
+                Request specific, measurable acceptance criteria for each
+                deliverable and add a provision that work is deemed accepted if
+                not disputed within 5 business days with specific written
+                objections.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="text-sm text-gray-600 mt-8">
+        Note: Risk descriptions (50-150 words) focus purely on explaining the
+        risk: what the contract says/fails to say, why it harms this party,
+        realistic negative scenarios, quantified consequences, and industry
+        context. Recommendations are provided separately with specific
+        actionable steps.
+      </p>
+    </div>
+  </body>
+</html>

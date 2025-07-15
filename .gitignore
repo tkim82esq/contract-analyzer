@@ -53,3 +53,6 @@ coverage/
 .parcel-cache/
 .temp/
 .tmp/
+
+# User feedback data
+feedback/
