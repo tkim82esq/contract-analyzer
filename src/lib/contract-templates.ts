@@ -562,6 +562,29 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Assignment': 'Restrict assignment without consent, allow assignment to affiliates or in connection with business transfers, and include change of control provisions.',
       'Notices': 'Specify delivery methods (email acceptable for routine notices), addresses, and deemed receipt timing. Include emergency contact procedures.',
       'Entire Agreement': 'Supersede prior agreements while preserving referenced statements of work, exhibits, and order forms. Include integration clause and amendment procedures.'
+    },
+    advancedComplianceNotes: {
+      multiJurisdictionalConsiderations: [
+        'GDPR: Data processing terms, privacy by design, DPO requirements',
+        'CCPA/CPRA: Consumer rights implementation, sale definitions, opt-out mechanisms',
+        'HIPAA: BAA requirements, security rule compliance, breach notifications',
+        'PCI DSS: Cardholder data protection, security standards, audit requirements',
+        'SOX: Financial data controls, audit trails, access management'
+      ],
+      federalRegulatoryOverlay: [
+        'Financial Services: GLBA compliance, FFIEC guidance, open banking APIs',
+        'Healthcare: HIPAA/HITECH, FDA software regulations, clinical data handling',
+        'Government: FedRAMP, FISMA, ITAR/EAR export controls',
+        'Education: FERPA, COPPA for K-12, accessibility requirements',
+        'Retail: PCI compliance, state privacy laws, consumer protection'
+      ],
+      industrySpecificRequirements: [
+        'Security: NIST frameworks, ISO 27001/27701, OWASP guidelines',
+        'Accessibility: WCAG 2.1 AA, Section 508, ADA compliance',
+        'Interoperability: REST/SOAP standards, OAuth 2.0, OpenAPI specifications',
+        'Performance: Apdex scores, Core Web Vitals, mobile performance',
+        'Reliability: Five 9s methodology, chaos engineering principles'
+      ]
     }
   },
 
@@ -817,7 +840,8 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
         'Financial Services: FINRA registration, U4/U5 considerations',
         'Technology: Export control, open source policies',
         'Government Contractors: Security clearances, compliance requirements'
-      ],
+      ]
+    },  
     essentialClauses: [
       'Parties & Capacity',
       'Relationship of Parties',
@@ -1067,6 +1091,29 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Entire Agreement': 'Supersede prior negotiations while preserving order forms, statements of work, and data processing addenda. Include integration with acceptable use policies.',
       'Amendment & Waiver': 'Require written modifications, specify that platform updates do not require consent, and preserve provider\'s right to modify terms with advance notice (30-90 days).',
       'Severability': 'Include provisions to preserve the overall agreement if portions are unenforceable, with specific protection for core commercial terms and data protection obligations.'
+    },
+    advancedComplianceNotes: {
+      multiJurisdictionalConsiderations: [
+        'GDPR: Data processing terms, privacy by design, DPO requirements',
+        'CCPA/CPRA: Consumer rights implementation, sale definitions, opt-out mechanisms',
+        'HIPAA: BAA requirements, security rule compliance, breach notifications',
+        'PCI DSS: Cardholder data protection, security standards, audit requirements',
+        'SOX: Financial data controls, audit trails, access management'
+      ],
+      federalRegulatoryOverlay: [
+        'Financial Services: GLBA compliance, FFIEC guidance, open banking APIs',
+        'Healthcare: HIPAA/HITECH, FDA software regulations, clinical data handling',
+        'Government: FedRAMP, FISMA, ITAR/EAR export controls',
+        'Education: FERPA, COPPA for K-12, accessibility requirements',
+        'Retail: PCI compliance, state privacy laws, consumer protection'
+      ],
+      industrySpecificRequirements: [
+        'Security: NIST frameworks, ISO 27001/27701, OWASP guidelines',
+        'Accessibility: WCAG 2.1 AA, Section 508, ADA compliance',
+        'Interoperability: REST/SOAP standards, OAuth 2.0, OpenAPI specifications',
+        'Performance: Apdex scores, Core Web Vitals, mobile performance',
+        'Reliability: Five 9s methodology, chaos engineering principles'
+      ]
     }
   },
 
@@ -1214,6 +1261,28 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Notices': 'Specify delivery methods for notices, addresses, and deemed receipt timing. Include emergency contact for breach situations.',
       'Entire Agreement': 'Supersede prior confidentiality discussions while preserving relationship with other agreements (service agreements, etc.). Include integration clause.',
       'Severability': 'Include blue pencil provisions for overly broad confidentiality terms and general severability to preserve agreement if portions are unenforceable.'
+    },
+    advancedComplianceNotes: {
+      multiJurisdictionalConsiderations: [
+        'California: Prohibits most non-competes; specific invention assignment rules',
+        'New York: Salary threshold for exempt employees; pay frequency requirements',
+        'Massachusetts: Garden leave requirements; specific NDA limitations',
+        'Washington: Salary thresholds for non-competes; specific disclosure requirements',
+        'Illinois: Advance notice for non-competes; specific consideration requirements'
+      ],
+      federalRegulatoryOverlay: [
+        'NLRB: Restrictions on confidentiality/non-disparagement affecting Section 7 rights',
+        'FTC: Proposed non-compete ban considerations',
+        'DOL: Independent contractor classification tests',
+        'EEOC: Release requirements and protected characteristics',
+        'SEC: Whistleblower protection requirements'
+      ],
+      industrySpecificRequirements: [
+        'Healthcare: State licensing, Medicare/Medicaid exclusions',
+        'Financial Services: FINRA registration, U4/U5 considerations',
+        'Technology: Export control, open source policies',
+        'Government Contractors: Security clearances, compliance requirements'
+      ]
     }
   },
 
@@ -1460,6 +1529,28 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       'Notices': 'Specify business addresses for notices, accept email for routine communications, and include procedures for urgent matters.',
       'Entire Agreement': 'Integrate all project terms while preserving separate statements of work, supersede employment discussions, and require written modifications.',
       'Severability': 'Include blue pencil provisions for overly restrictive terms and general severability to preserve the independent contractor relationship even if portions are unenforceable.'
+    },
+    advancedComplianceNotes: {
+      multiJurisdictionalConsiderations: [
+        'California: Prohibits most non-competes; specific invention assignment rules',
+        'New York: Salary threshold for exempt employees; pay frequency requirements',
+        'Massachusetts: Garden leave requirements; specific NDA limitations',
+        'Washington: Salary thresholds for non-competes; specific disclosure requirements',
+        'Illinois: Advance notice for non-competes; specific consideration requirements'
+      ],
+      federalRegulatoryOverlay: [
+        'NLRB: Restrictions on confidentiality/non-disparagement affecting Section 7 rights',
+        'FTC: Proposed non-compete ban considerations',
+        'DOL: Independent contractor classification tests',
+        'EEOC: Release requirements and protected characteristics',
+        'SEC: Whistleblower protection requirements'
+      ],
+      industrySpecificRequirements: [
+        'Healthcare: State licensing, Medicare/Medicaid exclusions',
+        'Financial Services: FINRA registration, U4/U5 considerations',
+        'Technology: Export control, open source policies',
+        'Government Contractors: Security clearances, compliance requirements'
+      ]
     }
   },
 
@@ -2567,7 +2658,8 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
         'Interoperability: REST/SOAP standards, OAuth 2.0, OpenAPI specifications',
         'Performance: Apdex scores, Core Web Vitals, mobile performance',
         'Reliability: Five 9s methodology, chaos engineering principles'
-      ],
+      ]
+    },  
     essentialClauses: [
       'Parties & Capacity',
       'Scope of Work / Deliverables',
@@ -4957,10 +5049,10 @@ export const CONTRACT_TEMPLATES: { [key: string]: ContractTemplate } = {
       ]
     }
   }
-},
+};
 
 // Helper function to get template for a contract type
-export function CONTRACT_TEMPLATES(contractType: string): ContractTemplate | undefined {
+export function getContractTemplate(contractType: string): ContractTemplate | undefined {
   return CONTRACT_TEMPLATES[contractType];
 }
 
@@ -5021,7 +5113,7 @@ export function templateMatcher(userInput: string): TemplateMatch | null {
   }
   
   // 2. Alias match
-  for (const [key, template] of Object.entries(CONTRACT_TEMPLATES)) {
+  for (const [, template] of Object.entries(CONTRACT_TEMPLATES)) {
     if (template.aliases) {
       for (const alias of template.aliases) {
         if (alias.toLowerCase() === normalizedInput) {
@@ -5037,7 +5129,7 @@ export function templateMatcher(userInput: string): TemplateMatch | null {
   }
   
   // 3. Industry variation match
-  for (const [key, template] of Object.entries(CONTRACT_TEMPLATES)) {
+  for (const [, template] of Object.entries(CONTRACT_TEMPLATES)) {
     if (template.industryVariations) {
       for (const variation of template.industryVariations) {
         if (variation.toLowerCase() === normalizedInput) {
@@ -5084,7 +5176,7 @@ export function templateMatcher(userInput: string): TemplateMatch | null {
   }
   
   // 5. Term-based matching
-  for (const [key, template] of Object.entries(CONTRACT_TEMPLATES)) {
+  for (const [, template] of Object.entries(CONTRACT_TEMPLATES)) {
     if (template.keyIdentifyingTerms) {
       const termScore = calculateTermMatchScore(normalizedInput, template.keyIdentifyingTerms);
       if (termScore > 0.4) {
