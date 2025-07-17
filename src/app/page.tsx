@@ -93,6 +93,9 @@ export default function Home() {
         result.contractText = contractText;
       }
 
+      // Add extracted parties to the result for risk note generation
+      result.extractedParties = parties;
+
       setAnalysisResult(result);
       setCurrentStep("results");
     } catch (err) {
@@ -143,6 +146,9 @@ export default function Home() {
         result.contractText = contractText;
       }
 
+      // Add extracted parties to the result for risk note generation
+      result.extractedParties = extractedParties;
+
       setAnalysisResult(result);
       setCurrentStep("results");
     } catch (err) {
@@ -166,11 +172,11 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen" style={{ backgroundColor: 'var(--bg-secondary)' }}>
       <div className="container mx-auto px-4 py-16">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 text-gray-800">
+          <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
             Contract Risk Analyzer
           </h1>
 

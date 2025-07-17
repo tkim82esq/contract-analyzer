@@ -1,0 +1,638 @@
+/* Risk Note Styling */
+.riskNote {
+  @apply bg-white shadow-lg rounded-lg overflow-hidden max-w-6xl mx-auto;
+}
+
+.riskNoteHeader {
+  @apply bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6;
+}
+
+.riskNoteTitle {
+  @apply text-3xl font-bold mb-2;
+}
+
+.riskNoteSubtitle {
+  @apply text-blue-100;
+}
+
+.executiveSummary {
+  @apply p-6 border-b border-gray-200;
+}
+
+.summarySection {
+  @apply mb-6;
+}
+
+.summaryGrid {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-4;
+}
+
+.summaryCard {
+  @apply bg-gray-50 p-4 rounded-lg;
+}
+
+.summaryLabel {
+  @apply text-sm text-gray-600;
+}
+
+.summaryValue {
+  @apply font-semibold text-gray-800;
+}
+
+.riskLevelCard {
+  @apply p-4 rounded-lg border-2;
+}
+
+.riskLevelHigh {
+  @apply bg-red-50 border-red-200 text-red-700;
+}
+
+.riskLevelMedium {
+  @apply bg-yellow-50 border-yellow-200 text-yellow-700;
+}
+
+.riskLevelLow {
+  @apply bg-green-50 border-green-200 text-green-700;
+}
+
+.keyMessageCard {
+  @apply p-4 bg-blue-50 rounded-lg border border-blue-200;
+}
+
+.keyMessageTitle {
+  @apply font-semibold text-blue-800 mb-2;
+}
+
+.keyMessageText {
+  @apply text-blue-700;
+}
+
+/* Navigation Tabs */
+.tabNavigation {
+  @apply border-b border-gray-200;
+}
+
+.tabList {
+  @apply flex space-x-8 px-6;
+}
+
+.tabButton {
+  @apply flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-colors;
+}
+
+.tabButtonActive {
+  @apply border-blue-500 text-blue-600;
+}
+
+.tabButtonInactive {
+  @apply border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300;
+}
+
+.tabIcon {
+  @apply h-4 w-4 mr-2;
+}
+
+/* Risk Breakdown */
+.riskBreakdown {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-4;
+}
+
+.riskBreakdownCard {
+  @apply p-4 rounded-lg border;
+}
+
+.riskBreakdownHigh {
+  @apply bg-red-50 border-red-200;
+}
+
+.riskBreakdownMedium {
+  @apply bg-yellow-50 border-yellow-200;
+}
+
+.riskBreakdownLow {
+  @apply bg-green-50 border-green-200;
+}
+
+.riskCount {
+  @apply text-2xl font-bold;
+}
+
+.riskCountHigh {
+  @apply text-red-600;
+}
+
+.riskCountMedium {
+  @apply text-yellow-600;
+}
+
+.riskCountLow {
+  @apply text-green-600;
+}
+
+/* Top Concerns */
+.topConcerns {
+  @apply space-y-2;
+}
+
+.concernItem {
+  @apply flex items-center p-3 bg-gray-50 rounded-lg;
+}
+
+.concernNumber {
+  @apply w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3;
+}
+
+.concernText {
+  @apply text-gray-800;
+}
+
+/* Risk Categories */
+.riskCategories {
+  @apply grid grid-cols-2 md:grid-cols-4 gap-3;
+}
+
+.categoryCard {
+  @apply bg-white border border-gray-200 p-3 rounded-lg;
+}
+
+.categoryName {
+  @apply text-sm text-gray-600;
+}
+
+.categoryCount {
+  @apply text-lg font-semibold text-gray-800;
+}
+
+/* Missing Protections */
+.missingProtections {
+  @apply space-y-3;
+}
+
+.protectionCard {
+  @apply border border-orange-200 bg-orange-50 p-4 rounded-lg;
+}
+
+.protectionHeader {
+  @apply flex items-center justify-between mb-2;
+}
+
+.protectionTitle {
+  @apply font-medium text-orange-800;
+}
+
+.protectionImportance {
+  @apply px-2 py-1 text-xs rounded;
+}
+
+.protectionCritical {
+  @apply bg-red-100 text-red-700;
+}
+
+.protectionImportant {
+  @apply bg-yellow-100 text-yellow-700;
+}
+
+.protectionBeneficial {
+  @apply bg-blue-100 text-blue-700;
+}
+
+.protectionRationale {
+  @apply text-sm text-orange-700 mb-2;
+}
+
+.protectionLanguage {
+  @apply text-xs text-orange-600;
+}
+
+/* Detailed Risks */
+.detailedRisks {
+  @apply space-y-4;
+}
+
+.riskItem {
+  @apply border border-gray-200 rounded-lg;
+}
+
+.riskItemHeader {
+  @apply p-4 cursor-pointer hover:bg-gray-50 transition-colors;
+}
+
+.riskItemContent {
+  @apply flex items-center justify-between;
+}
+
+.riskItemLabels {
+  @apply flex items-center space-x-3;
+}
+
+.riskItemBadge {
+  @apply px-2 py-1 text-xs rounded font-medium;
+}
+
+.riskItemTitle {
+  @apply font-medium text-gray-800;
+}
+
+.riskItemExpandIcon {
+  @apply h-5 w-5 text-gray-400 transition-transform;
+}
+
+.riskItemExpanded {
+  @apply rotate-90;
+}
+
+.riskItemDetails {
+  @apply px-4 pb-4 border-t border-gray-100;
+}
+
+.riskItemDetailsGrid {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4 mt-4;
+}
+
+.riskItemDetailSection {
+  @apply mb-4;
+}
+
+.riskItemDetailTitle {
+  @apply font-medium text-gray-700 mb-2;
+}
+
+.riskItemDetailText {
+  @apply text-sm text-gray-600;
+}
+
+/* Urgency Badges */
+.urgencyCritical {
+  @apply text-red-700 bg-red-100;
+}
+
+.urgencyImportant {
+  @apply text-yellow-700 bg-yellow-100;
+}
+
+.urgencyModerate {
+  @apply text-blue-700 bg-blue-100;
+}
+
+/* Negotiation Priorities */
+.negotiationSection {
+  @apply space-y-6;
+}
+
+.negotiationCategory {
+  @apply space-y-3;
+}
+
+.negotiationHeader {
+  @apply font-medium mb-3 flex items-center;
+}
+
+.negotiationHeaderIcon {
+  @apply h-5 w-5 mr-2;
+}
+
+.negotiationMustHave {
+  @apply text-red-700;
+}
+
+.negotiationShouldHave {
+  @apply text-yellow-700;
+}
+
+.negotiationNiceToHave {
+  @apply text-green-700;
+}
+
+.negotiationItem {
+  @apply p-4 rounded-lg;
+}
+
+.negotiationItemMustHave {
+  @apply border border-red-200 bg-red-50;
+}
+
+.negotiationItemShouldHave {
+  @apply border border-yellow-200 bg-yellow-50;
+}
+
+.negotiationItemNiceToHave {
+  @apply border border-green-200 bg-green-50;
+}
+
+.negotiationItemHeader {
+  @apply flex items-center justify-between mb-2;
+}
+
+.negotiationItemTitle {
+  @apply font-medium;
+}
+
+.negotiationItemTitleMustHave {
+  @apply text-red-800;
+}
+
+.negotiationItemTitleShouldHave {
+  @apply text-yellow-800;
+}
+
+.negotiationItemTitleNiceToHave {
+  @apply text-green-800;
+}
+
+.negotiationItemBadge {
+  @apply px-2 py-1 text-xs rounded;
+}
+
+.dealBreakerBadge {
+  @apply bg-red-200 text-red-700;
+}
+
+.powerHighBadge {
+  @apply bg-green-100 text-green-700;
+}
+
+.powerMediumBadge {
+  @apply bg-yellow-100 text-yellow-700;
+}
+
+.powerLowBadge {
+  @apply bg-red-100 text-red-700;
+}
+
+.negotiationItemRationale {
+  @apply text-sm;
+}
+
+.negotiationItemRationaleMustHave {
+  @apply text-red-700;
+}
+
+.negotiationItemRationaleShouldHave {
+  @apply text-yellow-700;
+}
+
+.negotiationItemRationaleNiceToHave {
+  @apply text-green-700;
+}
+
+/* Next Steps */
+.nextSteps {
+  @apply space-y-4;
+}
+
+.nextStepItem {
+  @apply border border-gray-200 rounded-lg p-4;
+}
+
+.nextStepHeader {
+  @apply flex items-center justify-between mb-3;
+}
+
+.nextStepTitle {
+  @apply font-medium text-gray-800;
+}
+
+.nextStepMeta {
+  @apply flex items-center space-x-2;
+}
+
+.nextStepPriority {
+  @apply px-2 py-1 text-xs rounded;
+}
+
+.priorityImmediate {
+  @apply text-red-700 bg-red-100;
+}
+
+.priorityWeek {
+  @apply text-yellow-700 bg-yellow-100;
+}
+
+.prioritySigning {
+  @apply text-blue-700 bg-blue-100;
+}
+
+.nextStepTimeline {
+  @apply text-sm text-gray-600;
+}
+
+.nextStepDescription {
+  @apply text-sm text-gray-600 mb-2;
+}
+
+.nextStepStakeholder {
+  @apply text-sm text-gray-500;
+}
+
+/* Compliance Considerations */
+.complianceSection {
+  @apply p-4 bg-blue-50 border border-blue-200 rounded-lg;
+}
+
+.complianceTitle {
+  @apply font-medium text-blue-800 mb-3;
+}
+
+.complianceGrid {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-4;
+}
+
+.complianceCategory {
+  @apply space-y-1;
+}
+
+.complianceCategoryTitle {
+  @apply text-sm font-medium text-blue-700 mb-2;
+}
+
+.complianceList {
+  @apply text-sm text-blue-600 space-y-1;
+}
+
+.complianceListItem {
+  @apply block;
+}
+
+/* Export Buttons */
+.exportButtons {
+  @apply flex gap-2;
+}
+
+.exportButton {
+  @apply px-4 py-2 rounded transition-colors;
+}
+
+.exportButtonPrimary {
+  @apply bg-white text-blue-600 hover:bg-blue-50;
+}
+
+.exportButtonSecondary {
+  @apply bg-blue-500 text-white hover:bg-blue-400;
+}
+
+/* Footer */
+.riskNoteFooter {
+  @apply border-t border-gray-200 bg-gray-50 p-4;
+}
+
+.footerContent {
+  @apply flex items-center justify-between;
+}
+
+.footerMeta {
+  @apply text-sm text-gray-600;
+}
+
+.footerClipboard {
+  @apply text-sm text-blue-600 hover:text-blue-800 transition-colors;
+}
+
+.footerDisclaimer {
+  @apply mt-3 text-xs text-gray-500;
+}
+
+/* Print Styles */
+@media print {
+  .riskNote {
+    @apply shadow-none;
+  }
+  
+  .riskNoteHeader {
+    @apply bg-white text-black border-b-2 border-black;
+  }
+  
+  .tabNavigation {
+    @apply hidden;
+  }
+  
+  .exportButtons {
+    @apply hidden;
+  }
+  
+  .riskNoteFooter {
+    @apply bg-white;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .riskNote {
+    @apply mx-4;
+  }
+  
+  .summaryGrid {
+    @apply grid-cols-1;
+  }
+  
+  .riskBreakdown {
+    @apply grid-cols-1;
+  }
+  
+  .riskCategories {
+    @apply grid-cols-1;
+  }
+  
+  .riskItemDetailsGrid {
+    @apply grid-cols-1;
+  }
+  
+  .complianceGrid {
+    @apply grid-cols-1;
+  }
+  
+  .tabList {
+    @apply flex-wrap;
+  }
+  
+  .exportButtons {
+    @apply flex-col;
+  }
+}
+
+/* Loading States */
+.loading {
+  @apply animate-pulse;
+}
+
+.loadingCard {
+  @apply bg-gray-200 rounded;
+}
+
+.loadingText {
+  @apply bg-gray-200 rounded h-4;
+}
+
+.loadingTitle {
+  @apply bg-gray-200 rounded h-6;
+}
+
+/* Animation Classes */
+.fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slideIn {
+  animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Accessibility */
+.srOnly {
+  @apply sr-only;
+}
+
+.focusVisible {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .riskNote {
+    @apply bg-gray-800 text-white;
+  }
+  
+  .summaryCard {
+    @apply bg-gray-700;
+  }
+  
+  .categoryCard {
+    @apply bg-gray-700 border-gray-600;
+  }
+  
+  .riskItem {
+    @apply border-gray-600;
+  }
+  
+  .riskItemHeader:hover {
+    @apply bg-gray-700;
+  }
+  
+  .nextStepItem {
+    @apply border-gray-600;
+  }
+  
+  .riskNoteFooter {
+    @apply bg-gray-700 border-gray-600;
+  }
+}

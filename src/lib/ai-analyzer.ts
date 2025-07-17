@@ -6,6 +6,9 @@ import {
   CONTRACT_TEMPLATES,
   ContractTemplate,
 } from "./contract-templates";
+import { industryDetectionEngine } from "./industry-detection";
+import { IndustryRiskAnalyzer } from "./industry-risk-analyzer";
+import { ThreeTierAnalysisResult, IndustryAnalysisMetadata } from "@/types/industry";
 
 // Initialize Anthropic client
 const anthropic = new Anthropic({
@@ -111,41 +114,6 @@ function buildTemplateGuidance(
 }
 
 // Build focused template guidance for clause analysis
-function buildClauseAnalysisGuidance(
-  template: ContractTemplate,
-  partyRole: string,
-): string {
-  let guidance = `\n=== CLAUSE ANALYSIS FRAMEWORK FOR ${template.contractType.toUpperCase()} ===\n`;
-
-  // Critical clauses to prioritize
-  guidance += `\nCRITICAL CLAUSES TO EXAMINE:\n`;
-  template.criticalClauses.forEach((clause, index) => {
-    guidance += `${index + 1}. ${clause}\n`;
-  });
-
-  // Key categories from review points
-  guidance += `\nKEY REVIEW CATEGORIES:\n`;
-  template.keyReviewPoints.forEach((point, index) => {
-    guidance += `${index + 1}. ${point.category}\n`;
-    guidance += `   Focus: ${point.description.substring(0, 100)}...\n`;
-  });
-
-  // Red flags patterns to watch for in clauses
-  guidance += `\nRED FLAG PATTERNS IN CLAUSES:\n`;
-  template.redFlags.forEach((flag, index) => {
-    guidance += `${index + 1}. ${flag.pattern} (${flag.severity})\n`;
-  });
-
-  // Party-specific clause concerns
-  if (template.partySpecificConcerns[partyRole]) {
-    guidance += `\nCLAUSE CONCERNS FOR ${partyRole.toUpperCase()}:\n`;
-    template.partySpecificConcerns[partyRole].forEach((concern, index) => {
-      guidance += `${index + 1}. ${concern}\n`;
-    });
-  }
-
-  return guidance;
-}
 
 export interface Risk {
   id: number;
@@ -166,14 +134,6 @@ export interface Risk {
   templateReference?: string;
 }
 
-export interface Clause {
-  id: number;
-  section: string;
-  title: string;
-  text: string;
-  risks: Risk[];
-  analysis: string;
-}
 
 export interface TemplateAnalysis {
   coveredReviewPoints: string[];
@@ -190,11 +150,17 @@ export interface AnalysisResult {
     overallRiskLevel: string;
   };
   risks: Risk[];
-  clauses?: Clause[];
   contractType: string;
   partyRole: string;
   templateAnalysis?: TemplateAnalysis;
   extractedParties?: { [role: string]: string };
+  analysisMetadata?: {
+    processingTime: number;
+    templateAnalysis: object;
+    industryAnalysis?: any;
+    threeTierResult?: ThreeTierAnalysisResult;
+  };
+  debugData?: any;
 }
 
 // Helper function to generate clause-specific mitigation text
@@ -868,11 +834,12 @@ export async function performHybridAnalysis(
 
   // Step 3: Merge and deduplicate findings
   console.log("Merging and deduplicating findings...");
-  const mergedRisks = mergeAndDeduplicateRisks(
+  const mergingResult = mergeAndDeduplicateRisks(
     templateRisks,
     generalRisks,
     template,
   );
+  const mergedRisks = mergingResult.finalRisks;
 
   // Calculate summary
   const summary = {
@@ -898,10 +865,11 @@ export async function performHybridAnalysis(
     partyRole,
     templateAnalysis,
     extractedParties,
+    debugData: mergingResult.debugData,
   };
 }
 
-// Enhanced function with template-aware prompting
+// Enhanced function with three-tier analysis (template → industry → general AI)
 export async function analyzeContractWithAI(
   contractText: string,
   contractType: string,
@@ -916,8 +884,8 @@ export async function analyzeContractWithAI(
       template = getContractTemplate(contractType);
     }
 
-    // Use enhanced analysis approach with template-aware prompting
-    return await performEnhancedAnalysis(
+    // Use three-tier analysis approach
+    return await performThreeTierAnalysis(
       contractText,
       contractType,
       partyRole,
@@ -964,7 +932,203 @@ export async function analyzeContractWithAI(
   }
 }
 
-// Enhanced analysis with template-aware prompting
+// Three-tier analysis: Contract Template → Industry Patterns → General AI
+async function performThreeTierAnalysis(
+  contractText: string,
+  contractType: string,
+  partyRole: string,
+  template: ContractTemplate | null,
+  extractedParties: { [role: string]: string },
+): Promise<AnalysisResult> {
+  const startTime = Date.now();
+  const tierTimes = {
+    contractSpecific: 0,
+    industryPattern: 0,
+    generalAI: 0,
+    consolidation: 0
+  };
+
+  console.log("=== THREE-TIER RISK ANALYSIS FLOW ===");
+  console.log("Template found:", !!template);
+  console.log("Contract type:", contractType);
+  console.log("Party role:", partyRole);
+  console.log("Extracted parties:", Object.keys(extractedParties));
+
+  // TIER 1: Contract-Specific Template Analysis
+  console.log("\n=== TIER 1: CONTRACT-SPECIFIC ANALYSIS ===");
+  const tier1Start = Date.now();
+  let templateRisks: Risk[] = [];
+  let templateAnalysis: TemplateAnalysis | undefined;
+
+  if (template) {
+    console.log("Running template-specific analysis...");
+    const templateResult = await performTemplateSpecificAnalysis(
+      contractText,
+      contractType,
+      partyRole,
+      template,
+      extractedParties,
+    );
+    templateRisks = templateResult.risks;
+    templateAnalysis = templateResult.templateAnalysis;
+    console.log(`Template analysis found ${templateRisks.length} risks`);
+  } else {
+    console.log("No template available for this contract type");
+  }
+  tierTimes.contractSpecific = Date.now() - tier1Start;
+
+  // TIER 2: Industry Risk Pattern Analysis
+  console.log("\n=== TIER 2: INDUSTRY PATTERN ANALYSIS ===");
+  const tier2Start = Date.now();
+  
+  // Extract company names for better industry detection
+  const companyNames = Object.values(extractedParties).filter(name => name.trim().length > 0);
+  
+  // Detect industry
+  console.log("Detecting industry context...");
+  const industryDetection = industryDetectionEngine.detectIndustry(
+    contractText,
+    contractType,
+    companyNames.length > 0 ? companyNames : undefined
+  );
+  
+  let industryAnalysisResult = null;
+  if (industryDetection) {
+    console.log(`Industry detected: ${industryDetection.industryName} (confidence: ${(industryDetection.confidence * 100).toFixed(1)}%)`);
+    
+    // Get industry pattern
+    const industryPattern = industryDetectionEngine.getIndustryPattern(industryDetection.industryId);
+    
+    // Perform industry-specific risk analysis
+    const industryAnalyzer = new IndustryRiskAnalyzer(
+      industryPattern,
+      contractText,
+      contractType,
+      partyRole
+    );
+    
+    industryAnalysisResult = industryAnalyzer.analyzeIndustryRisks(industryDetection);
+    console.log(`Industry analysis found ${industryAnalysisResult.industrySpecificRisks.length} industry-specific risks`);
+  } else {
+    console.log("No specific industry detected - using general business patterns");
+  }
+  tierTimes.industryPattern = Date.now() - tier2Start;
+
+  // TIER 3: General AI Analysis
+  console.log("\n=== TIER 3: GENERAL AI ANALYSIS ===");
+  const tier3Start = Date.now();
+  console.log("Running general legal analysis...");
+  const generalRisks = await performGeneralLegalAnalysis(
+    contractText,
+    contractType,
+    partyRole,
+    extractedParties,
+    templateRisks, // Pass template risks to avoid duplication
+  );
+  console.log(`General analysis found ${generalRisks.length} additional risks`);
+  tierTimes.generalAI = Date.now() - tier3Start;
+
+  // CONSOLIDATION: Merge and deduplicate findings with industry awareness
+  console.log("\n=== CONSOLIDATION: INDUSTRY-AWARE MERGING ===");
+  const consolidationStart = Date.now();
+  
+  // Convert industry risks to standard Risk format
+  let industryRisks: Risk[] = [];
+  if (industryAnalysisResult) {
+    industryRisks = convertIndustryRisksToStandardFormat(
+      industryAnalysisResult.industrySpecificRisks,
+      templateRisks.length
+    );
+    console.log(`Converted ${industryRisks.length} industry risks to standard format`);
+  }
+
+  // Merge all three tiers with industry-aware deduplication
+  const mergingResult = performIndustryAwareMerging(
+    templateRisks,
+    industryRisks,
+    generalRisks,
+    industryAnalysisResult
+  );
+  
+  const mergedRisks = mergingResult.finalRisks;
+  tierTimes.consolidation = Date.now() - consolidationStart;
+
+  const totalProcessingTime = Date.now() - startTime;
+
+  // Calculate summary
+  const summary = {
+    totalRisks: mergedRisks.length,
+    highRisks: mergedRisks.filter((r) => r.severity === "high").length,
+    mediumRisks: mergedRisks.filter((r) => r.severity === "medium").length,
+    lowRisks: mergedRisks.filter((r) => r.severity === "low").length,
+    overallRiskLevel: mergedRisks.some((r) => r.severity === "high")
+      ? "high"
+      : mergedRisks.some((r) => r.severity === "medium")
+        ? "medium"
+        : "low",
+  };
+
+  // Build three-tier analysis result
+  const threeTierResult: ThreeTierAnalysisResult = {
+    contractSpecificAnalysis: {
+      risks: templateRisks,
+      metadata: templateAnalysis || {},
+      processingTime: tierTimes.contractSpecific
+    },
+    industryPatternAnalysis: industryAnalysisResult,
+    generalAIAnalysis: {
+      risks: generalRisks,
+      metadata: {},
+      processingTime: tierTimes.generalAI
+    },
+    consolidatedResult: {
+      finalRisks: mergedRisks,
+      riskSources: mergedRisks.map(risk => ({
+        riskId: risk.id,
+        sources: [risk.source || 'ai'] as Array<'template' | 'industry' | 'ai'>,
+        consolidationStrategy: 'unique' as 'merged' | 'enhanced' | 'unique'
+      })),
+      industryContext: industryDetection?.industryName || null,
+      overallConfidence: industryDetection?.confidence || 0
+    },
+    debugInformation: {
+      industryDetectionDetails: industryDetection,
+      tierProcessingTimes: tierTimes,
+      riskConsolidationDecisions: mergingResult.consolidationDecisions || []
+    }
+  };
+
+  console.log("\n=== THREE-TIER ANALYSIS COMPLETE ===");
+  console.log(`Total processing time: ${totalProcessingTime}ms`);
+  console.log(`Tier breakdown:`, tierTimes);
+  console.log(`Final result: ${mergedRisks.length} total risks`);
+  console.log(`  - Template: ${templateRisks.length}`);
+  console.log(`  - Industry: ${industryRisks.length}`);
+  console.log(`  - General AI: ${generalRisks.length}`);
+  console.log(`Risk severity breakdown:`, {
+    high: summary.highRisks,
+    medium: summary.mediumRisks,
+    low: summary.lowRisks
+  });
+
+  return {
+    summary,
+    risks: mergedRisks,
+    contractType,
+    partyRole,
+    templateAnalysis,
+    extractedParties,
+    analysisMetadata: {
+      processingTime: totalProcessingTime,
+      templateAnalysis: templateAnalysis || {},
+      industryAnalysis: industryAnalysisResult,
+      threeTierResult
+    },
+    debugData: mergingResult.debugData,
+  };
+}
+
+// Legacy enhanced analysis function for backward compatibility
 async function performEnhancedAnalysis(
   contractText: string,
   contractType: string,
@@ -1015,11 +1179,12 @@ async function performEnhancedAnalysis(
 
     // Merge and deduplicate findings
     console.log("=== MERGING RESULTS ===");
-    const mergedRisks = mergeAndDeduplicateRisks(
+    const mergingResult = mergeAndDeduplicateRisks(
       templateRisks,
       generalRisks,
       template,
     );
+    const mergedRisks = mergingResult.finalRisks;
     console.log("Combined total risks:", mergedRisks.length);
 
     // Log risk breakdown by severity
@@ -1077,6 +1242,7 @@ async function performEnhancedAnalysis(
       partyRole,
       templateAnalysis,
       extractedParties,
+      debugData: mergingResult.debugData,
     };
   } else {
     console.log("Running template analysis:", false);
@@ -1503,7 +1669,24 @@ async function performGeneralLegalAnalysis(
   // Build list of already-identified risk areas to avoid duplication
   const templateRiskAreas = templateRisks.map((r) => r.category.toLowerCase());
 
-  const prompt = `ROLE: You are a senior corporate attorney with 20+ years of experience reviewing all types of contracts.
+  // Check if contract text appears to be corrupted or binary
+  const isBinaryOrCorrupted = contractText.length > 0 && 
+    (contractText.includes('\0') || 
+     contractText.match(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g) ||
+     !/[a-zA-Z]{10,}/.test(contractText));
+
+  // Also check for empty or very short contracts
+  const isEmptyOrTooShort = !contractText || contractText.trim().length < 50;
+
+  const contractTextWarning = isBinaryOrCorrupted 
+    ? `\n\nWARNING: The contract text appears to be corrupted or in an unreadable format. Please provide your analysis based on standard contract risks for this type of agreement.`
+    : isEmptyOrTooShort
+    ? `\n\nWARNING: The contract text is empty or too short to analyze. Please provide general risk analysis for a typical ${contractType} agreement from the ${partyRole} perspective.`
+    : '';
+
+  const prompt = `CRITICAL INSTRUCTION: You MUST respond with ONLY valid JSON. Do NOT include any explanatory text, greetings, or commentary outside the JSON structure. Your entire response must be parseable as JSON.
+
+ROLE: You are a senior corporate attorney with 20+ years of experience reviewing all types of contracts.
 
 Provide objective analysis based on standard contract principles and market practices. Do not reference specific cases, statistics, or claim personal experience. For each risk, include specific mitigation suggestions with concrete contract language to add, modify, or remove.
 
@@ -1516,7 +1699,7 @@ ${
         .map(([role, name]) => `${role}: ${name}`)
         .join(", ")}`
     : ""
-}
+}${contractTextWarning}
 
 CONTRACT TEXT:
 ${contractText}
@@ -1561,7 +1744,9 @@ For each additional risk, provide:
   Suggested text: exact contract language to use
   Brief explanation of why this mitigates the risk
 
-Return findings in this JSON format:
+IMPORTANT: If the contract text is unreadable or corrupted, provide general risks common to ${contractType} agreements from the ${partyRole} perspective.
+
+Return ONLY this JSON structure (no other text):
 {
   "risks": [
     {
@@ -1582,7 +1767,7 @@ Return findings in this JSON format:
   ]
 }
 
-Identify ALL additional risks that complement the template-based analysis, ensuring comprehensive coverage of all significant risks. Do not limit the number of risks - thoroughness is essential.`;
+REMEMBER: Respond with ONLY the JSON object above. No additional text before or after the JSON.`;
 
   try {
     const response = await anthropic.messages.create({
@@ -1612,24 +1797,106 @@ Identify ALL additional risks that complement the template-based analysis, ensur
         console.log("Attempting direct JSON parsing...");
         analysisData = JSON.parse(trimmed);
       } else {
-        // Method 2: Extract JSON with regex
+        // Method 2: Extract JSON with improved regex patterns
         console.log("Attempting regex JSON extraction...");
-        const jsonMatch = content.text.match(/\{[\s\S]*\}/);
+        
+        // Try multiple regex patterns
+        let jsonMatch = null;
+        
+        // Pattern 1: Standard JSON object
+        jsonMatch = content.text.match(/\{[\s\S]*\}/);
+        
+        // Pattern 2: JSON that might be preceded by some text
+        if (!jsonMatch) {
+          jsonMatch = content.text.match(/\{(?:[^{}]|(?:\{[^{}]*\}))*\}/);
+        }
+        
+        // Pattern 3: Extract risks array if the response structure is different
+        if (!jsonMatch) {
+          const risksMatch = content.text.match(/"risks"\s*:\s*\[([\s\S]*?)\]/);
+          if (risksMatch) {
+            jsonMatch = [`{"risks": [${risksMatch[1]}]}`];
+          }
+        }
+        
         if (!jsonMatch) {
           console.error("No JSON found in general legal analysis response");
-          console.error("Raw response:", content.text);
-          throw new Error("No JSON found in general legal analysis response");
+          console.error("Raw response preview:", content.text.substring(0, 500));
+          
+          // Method 3: Fallback with default structure for corrupted contracts
+          if (isBinaryOrCorrupted || isEmptyOrTooShort) {
+            console.log("Contract appears corrupted or empty, using default risk analysis");
+            analysisData = {
+              risks: [
+                {
+                  title: isBinaryOrCorrupted ? "Unable to Parse Contract Content" : "Insufficient Contract Content",
+                  category: "General",
+                  severity: "high",
+                  description: isBinaryOrCorrupted 
+                    ? `The contract file appears to be corrupted or in an unsupported format. Unable to extract and analyze the contract terms. This prevents a thorough legal review and risk assessment. The ${partyRole} should obtain a readable version of the contract before proceeding with any agreement.`
+                    : `The contract text is empty or too short for meaningful analysis. This may indicate an incomplete document or extraction error. The ${partyRole} should ensure a complete contract is available for review before proceeding.`,
+                  recommendation: "Obtain a complete, readable version of the contract in PDF, Word, or plain text format before conducting legal analysis.",
+                  mitigation: {
+                    action: "add",
+                    targetClause: "General",
+                    suggestedText: "Request a new copy of the contract in a standard format",
+                    explanation: "A complete, readable contract is essential for proper legal review"
+                  },
+                  clauseLocation: "Entire Document",
+                  relatedText: "[Contract text unreadable or insufficient]"
+                }
+              ]
+            };
+          } else {
+            throw new Error("No JSON found in general legal analysis response");
+          }
+        } else {
+          // Clean the extracted JSON
+          let jsonString = jsonMatch[0];
+          
+          // Remove any markdown code blocks if present
+          jsonString = jsonString.replace(/```json\s*/g, '').replace(/```\s*$/g, '');
+          
+          // Remove any trailing commas in arrays or objects
+          jsonString = jsonString.replace(/,(\s*[}\]])/g, '$1');
+          
+          analysisData = JSON.parse(jsonString);
         }
-        analysisData = JSON.parse(jsonMatch[0]);
       }
     } catch (parseError) {
       console.error("JSON parsing failed for general legal analysis");
-      console.error("Raw response:", content.text);
+      console.error("Raw response preview:", content.text.substring(0, 500));
       console.error("Parse error:", parseError);
 
-      // Fallback: Return empty results
-      console.log("Using fallback empty results for general legal analysis");
-      return [];
+      // Enhanced fallback: Try to salvage partial data
+      try {
+        // Attempt to extract risk titles and create minimal risk objects
+        const riskTitleMatches = content.text.match(/"title"\s*:\s*"([^"]+)"/g);
+        if (riskTitleMatches && riskTitleMatches.length > 0) {
+          console.log("Attempting to salvage risk data from partial response");
+          const risks = riskTitleMatches.map((match, index) => {
+            const title = match.match(/"title"\s*:\s*"([^"]+)"/)?.[1] || `Risk ${index + 1}`;
+            return {
+              title,
+              category: "General",
+              severity: "medium",
+              description: `Analysis incomplete due to response parsing error. ${title} was identified but full details could not be extracted.`,
+              recommendation: "Review this risk area manually in the contract.",
+              clauseLocation: "Unknown",
+              relatedText: ""
+            };
+          });
+          
+          analysisData = { risks };
+        } else {
+          // Final fallback: Return empty results
+          console.log("Using fallback empty results for general legal analysis");
+          return [];
+        }
+      } catch (salvageError) {
+        console.error("Failed to salvage partial data:", salvageError);
+        return [];
+      }
     }
 
     // Validate the parsed data structure
@@ -1638,22 +1905,62 @@ Identify ALL additional risks that complement the template-based analysis, ensur
       return [];
     }
 
-    const risks: Risk[] = (analysisData.risks || []).map(
-      (risk: any, index: number) => ({
-        id: templateRisks.length + index + 1,
+    // Ensure risks array exists
+    if (!Array.isArray(analysisData.risks)) {
+      console.error("Invalid risks array in analysis data:", analysisData);
+      // Try to extract risks from other possible structures
+      if (analysisData.risk || analysisData.Risk) {
+        analysisData.risks = [analysisData.risk || analysisData.Risk];
+      } else {
+        return [];
+      }
+    }
+
+    // Validate and transform each risk with robust error handling
+    const risks: Risk[] = [];
+    
+    for (let index = 0; index < analysisData.risks.length; index++) {
+      const risk = analysisData.risks[index];
+      
+      // Skip invalid risk objects
+      if (!risk || typeof risk !== "object") {
+        console.warn(`Skipping invalid risk at index ${index}:`, risk);
+        continue;
+      }
+      
+      // Validate required fields and provide defaults
+      const validatedRisk: Risk = {
+        id: templateRisks.length + risks.length + 1,
         category: risk.category || "General",
-        severity: risk.severity || "medium",
-        title: risk.title || "Additional Risk",
-        description: risk.description || "",
-        recommendation: risk.recommendation || "",
-        mitigation:
-          risk.mitigation && typeof risk.mitigation === "object"
-            ? risk.mitigation
-            : undefined,
-        clauseLocation: risk.clauseLocation,
-        relatedText: risk.relatedText,
-      }),
-    );
+        severity: ["high", "medium", "low"].includes(risk.severity) ? risk.severity : "medium",
+        title: risk.title || `Additional Risk ${risks.length + 1}`,
+        description: risk.description || "Risk details unavailable due to parsing error.",
+        recommendation: risk.recommendation || "Review this risk area in the contract manually.",
+        mitigation: undefined,
+        clauseLocation: risk.clauseLocation || undefined,
+        relatedText: risk.relatedText || undefined,
+      };
+      
+      // Validate mitigation object if present
+      if (risk.mitigation && typeof risk.mitigation === "object") {
+        const mitigation = risk.mitigation;
+        if (mitigation.action && mitigation.targetClause && mitigation.suggestedText) {
+          validatedRisk.mitigation = {
+            action: mitigation.action,
+            targetClause: mitigation.targetClause,
+            suggestedText: mitigation.suggestedText,
+            explanation: mitigation.explanation || ""
+          };
+        }
+      }
+      
+      // Ensure description is not too long
+      if (validatedRisk.description.length > 500) {
+        validatedRisk.description = validatedRisk.description.substring(0, 497) + "...";
+      }
+      
+      risks.push(validatedRisk);
+    }
 
     console.log(`General analysis found ${risks.length} additional risks`);
     return risks;
@@ -1668,45 +1975,15 @@ function mergeAndDeduplicateRisks(
   templateRisks: Risk[],
   generalRisks: Risk[],
   _template: ContractTemplate | null,
-): Risk[] {
-  const mergedRisks: Risk[] = [...templateRisks];
-
-  // Add general risks that don't duplicate template risks
-  for (const generalRisk of generalRisks) {
-    const isDuplicate = templateRisks.some((templateRisk) =>
-      areSimilarRisks(templateRisk, generalRisk),
-    );
-
-    if (!isDuplicate) {
-      mergedRisks.push(generalRisk);
-    } else {
-      console.log(`Filtered duplicate risk: ${generalRisk.title}`);
-    }
-  }
-
-  // Sort by priority: template risks first, then by severity
-  const sortedRisks = mergedRisks.sort((a, b) => {
-    // Template risks get priority
-    const aIsTemplate = a.id <= templateRisks.length;
-    const bIsTemplate = b.id <= templateRisks.length;
-
-    if (aIsTemplate && !bIsTemplate) return -1;
-    if (!aIsTemplate && bIsTemplate) return 1;
-
-    // Then sort by severity
-    const severityOrder = { high: 3, medium: 2, low: 1 };
-    return severityOrder[b.severity] - severityOrder[a.severity];
-  });
-
-  // Reassign IDs after sorting
-  sortedRisks.forEach((risk, index) => {
-    risk.id = index + 1;
-  });
-
-  console.log(
-    `Merged risks: ${templateRisks.length} template + ${generalRisks.length} general = ${sortedRisks.length} final`,
-  );
-  return sortedRisks;
+): { finalRisks: Risk[]; debugData: any } {
+  // Use the enhanced merging function with debug capabilities
+  const result = mergeAnalysisResults(templateRisks, generalRisks);
+  
+  // For backward compatibility, also return the old format
+  return {
+    finalRisks: result.finalRisks,
+    debugData: result.debugData
+  };
 }
 
 // Check if two risks are similar enough to be considered duplicates
@@ -1769,212 +2046,190 @@ export function preprocessContract(text: string): string {
   return text;
 }
 
-// Enhanced function for clause-by-clause analysis with template guidance
-export async function analyzeContractClauses(
-  contractText: string,
-  contractType: string,
-  partyRole: string,
-  extractedParties: { [role: string]: string } = {},
-): Promise<Clause[]> {
-  try {
-    // Get contract-specific template
-    const template = getContractTemplate(contractType);
 
-    if (!template) {
-      throw new Error(`No template found for contract type: ${contractType}`);
-    }
-
-    // Build focused template guidance for clause analysis
-    const templateGuidance = buildClauseAnalysisGuidance(template, partyRole);
-
-    const prompt = `ROLE: You are a senior corporate attorney with 20+ years of experience reviewing all types of contracts.
-
-Provide objective analysis based on standard contract principles and market practices. Do not reference specific cases, statistics, or claim personal experience. Break down this contract into its main clauses and analyze each one objectively.
-
-CONTEXT:
-- Contract Type: ${contractType}
-- Analysis Perspective: ${partyRole}
-${
-  Object.keys(extractedParties).length > 0
-    ? `- Contract Parties: ${Object.entries(extractedParties)
-        .map(([role, name]) => `${role}: ${name}`)
-        .join(", ")}`
-    : ""
-}
-
-CONTRACT TEXT:
-${contractText}
-
-CLAUSE ANALYSIS FRAMEWORK:
-${templateGuidance}
-
-INSTRUCTIONS:
-Break down this contract into its main clauses and analyze each one from the ${partyRole} perspective using standard contract principles and market practices:
-
-For each major clause or section:
-1. Extract the actual clause text
-2. Identify the section/clause title
-3. Analyze specific risks for the ${partyRole} based on standard contract principles
-4. Provide analysis of what this clause means in practice based on standard interpretations
-5. Reference template review points where applicable
-
-Prioritize these critical clauses: ${template.criticalClauses.join(", ")}
-
-Respond in this exact JSON format:
-{
-  "clauses": [
-    {
-      "section": "Section number or identifier",
-      "title": "Clause title matching template framework",
-      "text": "The actual text of the clause",
-      "risks": [
-        {
-          "severity": "high|medium|low",
-          "description": "Specific risk in this clause for the ${partyRole}",
-          "recommendation": "Specific actionable advice",
-          "mitigation": {
-            "action": "modify",
-            "targetClause": "Section name",
-            "suggestedText": "Exact contract language to use",
-            "explanation": "Brief explanation of why this mitigates the risk"
-          },
-          "templateReference": "Related template review point if applicable"
-        }
-      ],
-      "analysis": "Brief explanation of what this clause means for the ${partyRole}",
-      "templateAlignment": "How this clause aligns with template expectations"
-    }
-  ]
-}
-
-Analyze ALL important clauses and provisions. Ensure coverage of all critical template clauses and other significant contractual provisions. Do not limit the number of clauses - comprehensive clause analysis is essential.`;
-
-    const modelOptions = [
-      "claude-3-5-sonnet-20241022",
-      "claude-3-sonnet-20240229",
-      "claude-3-opus-20240229",
-      "claude-3-haiku-20240307",
-    ];
-
-    let response;
-    for (const model of modelOptions) {
-      try {
-        response = await anthropic.messages.create({
-          model,
-          max_tokens: 3000,
-          temperature: 0,
-          messages: [
-            {
-              role: "user",
-              content: prompt,
-            },
-          ],
-        });
-        break;
-      } catch (error) {
-        continue;
-      }
-    }
-
-    if (!response) {
-      throw new Error("Failed to analyze clauses");
-    }
-
-    const content = response.content[0];
-    if (content.type !== "text") {
-      throw new Error("Unexpected response type");
-    }
-
-    // Parse the response
-    let clauseData;
-    try {
-      const jsonMatch = content.text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        clauseData = JSON.parse(jsonMatch[0]);
-      } else {
-        clauseData = JSON.parse(content.text.trim());
-      }
-    } catch (parseError) {
-      console.error("Failed to parse clause analysis:", content.text);
-      throw new Error("Failed to parse clause analysis");
-    }
-
-    // Process clauses
-    const clauses: Clause[] = clauseData.clauses.map(
-      (clause: any, index: number) => ({
-        id: index + 1,
-        section: clause.section || `Section ${index + 1}`,
-        title: clause.title || "Untitled Clause",
-        text: clause.text || "",
-        risks: (clause.risks || []).map((risk: any, riskIndex: number) => ({
-          id: riskIndex + 1,
-          category: clause.title || "General",
-          severity: risk.severity || "medium",
-          title: `Risk in ${clause.title}`,
-          description: risk.description || "",
-          recommendation: risk.recommendation || "",
-          mitigation:
-            risk.mitigation && typeof risk.mitigation === "object"
-              ? risk.mitigation
-              : undefined,
-          relatedText: clause.text,
-        })),
-        analysis: clause.analysis || "",
-      }),
-    );
-
-    return clauses;
-  } catch (error) {
-    console.error("Clause analysis error:", error);
-    throw error;
-  }
-}
-
-// Intelligent merging of template-based and AI-discovered risks
+// Intelligent merging of template-based and AI-discovered risks with comprehensive debugging
 export function mergeAnalysisResults(
   templateRisks: Risk[],
   aiRisks: Risk[],
-): Risk[] {
-  console.log(
-    `Merging ${templateRisks.length} template risks with ${aiRisks.length} AI risks`,
-  );
+  config: DuplicationConfig = {
+    similarityThreshold: 0.6,
+    titleWeight: 0.4,
+    descriptionWeight: 0.3,
+    categoryWeight: 0.3,
+    enableManualOverrides: true
+  }
+): { finalRisks: Risk[]; debugData: any } {
+  console.log('=== DETAILED MERGING PROCESS START ===');
+  console.log(`Template risks: ${templateRisks.length}`);
+  console.log(`AI risks: ${aiRisks.length}`);
+  console.log(`Total before merging: ${templateRisks.length + aiRisks.length}`);
+
+  const mergingDebugData = {
+    beforeMerging: {
+      templateRisks: [...templateRisks],
+      generalRisks: [...aiRisks],
+      totalCount: templateRisks.length + aiRisks.length
+    },
+    duplicationDetection: [] as any[],
+    afterMerging: {
+      finalRisks: [] as Risk[],
+      removedRisks: [] as Risk[],
+      addedRisks: [] as Risk[],
+      totalCount: 0
+    },
+    configuration: config
+  };
 
   // Create a merged array starting with template risks
   const mergedRisks: Risk[] = [...templateRisks];
   let nextId = Math.max(...templateRisks.map((r) => r.id), 0) + 1;
+  const removedRisks: Risk[] = [];
 
   // Process each AI risk for potential overlap
   for (const aiRisk of aiRisks) {
-    const overlappingRisk = findOverlappingRisk(aiRisk, mergedRisks);
+    const duplicationResult = detectDuplicateRiskDetailed(aiRisk, templateRisks, config);
+    
+    mergingDebugData.duplicationDetection.push({
+      generalRisk: aiRisk,
+      templateRisk: duplicationResult.matchedRisk,
+      similarityScore: duplicationResult.similarityScore,
+      isDuplicate: duplicationResult.isDuplicate,
+      reason: duplicationResult.reason,
+      comparisonDetails: duplicationResult.comparisonDetails
+    });
 
-    if (overlappingRisk) {
-      // Merge with existing risk
-      const mergedRisk = intelligentMerge(overlappingRisk, aiRisk);
-
-      // Replace the overlapping risk with the merged version
-      const index = mergedRisks.findIndex((r) => r.id === overlappingRisk.id);
-      if (index !== -1) {
-        mergedRisks[index] = mergedRisk;
-      }
-
-      console.log(
-        `Merged AI risk "${aiRisk.title}" with template risk "${overlappingRisk.title}"`,
-      );
+    if (duplicationResult.isDuplicate) {
+      console.log(`🚫 FILTERED DUPLICATE: "${aiRisk.title}"`);
+      console.log(`   Reason: ${duplicationResult.reason}`);
+      console.log(`   Similarity: ${(duplicationResult.similarityScore * 100).toFixed(1)}%`);
+      removedRisks.push(aiRisk);
     } else {
-      // Add as new risk
-      mergedRisks.push({
+      console.log(`✅ KEEPING UNIQUE: "${aiRisk.title}"`);
+      console.log(`   Reason: ${duplicationResult.reason}`);
+      console.log(`   Similarity: ${(duplicationResult.similarityScore * 100).toFixed(1)}%`);
+      
+      const newRisk = {
         ...aiRisk,
         id: nextId++,
-        source: "ai_insight",
-      });
+        source: "ai_insight" as const,
+      };
+      mergedRisks.push(newRisk);
+      mergingDebugData.duplicationDetection[mergingDebugData.duplicationDetection.length - 1].addedToFinal = true;
     }
   }
 
   // Sort by severity first, then by source (template before AI)
   const sortedRisks = sortRisksBySeverityAndSource(mergedRisks);
+  const finalRisks = addRiskMetadata(sortedRisks);
 
-  // Add metadata to each risk
-  return addRiskMetadata(sortedRisks);
+  mergingDebugData.afterMerging = {
+    finalRisks,
+    removedRisks,
+    addedRisks: aiRisks.filter(r => !removedRisks.includes(r)),
+    totalCount: finalRisks.length
+  };
+
+  console.log('=== MERGING COMPLETE ===');
+  console.log(`Final risk count: ${finalRisks.length}`);
+  console.log(`Removed as duplicates: ${removedRisks.length}`);
+  console.log(`Template risks kept: ${templateRisks.length}`);
+  console.log(`AI risks added: ${finalRisks.length - templateRisks.length}`);
+  
+  // Log details of removed risks
+  if (removedRisks.length > 0) {
+    console.log('\n🗑️  REMOVED RISKS DETAILS:');
+    removedRisks.forEach((risk, index) => {
+      console.log(`${index + 1}. "${risk.title}" (${risk.severity}) - ${risk.category}`);
+    });
+  }
+
+  return { 
+    finalRisks, 
+    debugData: {
+      mergingProcess: mergingDebugData,
+      summary: {
+        totalOriginal: templateRisks.length + aiRisks.length,
+        finalCount: finalRisks.length,
+        filteredCount: removedRisks.length,
+        duplicateRate: ((removedRisks.length / (templateRisks.length + aiRisks.length)) * 100).toFixed(1)
+      }
+    }
+  };
+}
+
+// Enhanced duplicate detection with detailed comparison and logging
+function detectDuplicateRiskDetailed(
+  aiRisk: Risk,
+  templateRisks: Risk[],
+  config: DuplicationConfig
+): {
+  isDuplicate: boolean;
+  matchedRisk: Risk | null;
+  similarityScore: number;
+  comparisonDetails: any;
+  reason: string;
+} {
+  let bestMatch: Risk | null = null;
+  let highestSimilarity = 0;
+  let bestComparisonDetails = {};
+
+  for (const templateRisk of templateRisks) {
+    const titleSimilarity = calculateTextSimilarity(aiRisk.title, templateRisk.title);
+    const descriptionSimilarity = calculateTextSimilarity(aiRisk.description, templateRisk.description);
+    const categorySimilarity = aiRisk.category.toLowerCase() === templateRisk.category.toLowerCase() ? 1.0 : 0.0;
+
+    // Weighted similarity calculation using config
+    const overallSimilarity = (
+      titleSimilarity * config.titleWeight +
+      descriptionSimilarity * config.descriptionWeight +
+      categorySimilarity * config.categoryWeight
+    );
+
+    const comparisonDetails = {
+      titleSimilarity,
+      descriptionSimilarity,
+      categorySimilarity,
+      overallSimilarity,
+      templateRiskTitle: templateRisk.title,
+      aiRiskTitle: aiRisk.title
+    };
+
+    console.log(`🔍 Comparing "${aiRisk.title}" with "${templateRisk.title}":`, {
+      title: (titleSimilarity * 100).toFixed(1) + '%',
+      description: (descriptionSimilarity * 100).toFixed(1) + '%',
+      category: categorySimilarity > 0 ? 'MATCH' : 'DIFFERENT',
+      overall: (overallSimilarity * 100).toFixed(1) + '%',
+      threshold: (config.similarityThreshold * 100).toFixed(1) + '%'
+    });
+
+    if (overallSimilarity > highestSimilarity) {
+      highestSimilarity = overallSimilarity;
+      bestMatch = templateRisk;
+      bestComparisonDetails = comparisonDetails;
+    }
+  }
+
+  const isDuplicate = highestSimilarity > config.similarityThreshold;
+  
+  const reason = isDuplicate 
+    ? `High similarity (${(highestSimilarity * 100).toFixed(1)}% > ${(config.similarityThreshold * 100).toFixed(1)}%) with template risk "${bestMatch?.title}"`
+    : `Low similarity (${(highestSimilarity * 100).toFixed(1)}% ≤ ${(config.similarityThreshold * 100).toFixed(1)}%) - keeping as unique risk`;
+
+  return {
+    isDuplicate,
+    matchedRisk: bestMatch,
+    similarityScore: highestSimilarity,
+    comparisonDetails: bestComparisonDetails,
+    reason
+  };
+}
+
+interface DuplicationConfig {
+  similarityThreshold: number;
+  titleWeight: number;
+  descriptionWeight: number;
+  categoryWeight: number;
+  enableManualOverrides: boolean;
 }
 
 // Find overlapping risks using similarity analysis
@@ -2127,4 +2382,119 @@ function addRiskMetadata(risks: Risk[]): Risk[] {
         ? `${risk.description} [Combined from template analysis and AI insights]`
         : risk.description,
   }));
+}
+
+// Convert industry-specific risks to standard Risk format
+function convertIndustryRisksToStandardFormat(
+  industryRisks: any[],
+  baseId: number
+): Risk[] {
+  return industryRisks.map((industryRisk, index) => ({
+    id: baseId + index + 1,
+    category: industryRisk.risk.category,
+    severity: industryRisk.risk.severity,
+    title: industryRisk.risk.title,
+    description: industryRisk.risk.description,
+    recommendation: industryRisk.risk.mitigationStrategies[0] || 'Review and address this industry-specific risk',
+    mitigation: {
+      action: 'add' as const,
+      targetClause: 'Industry-Specific Protections',
+      suggestedText: industryRisk.risk.mitigationStrategies.join('; '),
+      explanation: `Industry-specific protection for ${industryRisk.risk.category.toLowerCase()}`
+    },
+    source: 'industry' as const,
+    clauseLocation: `Industry Risk - ${industryRisk.risk.category}`,
+    relatedText: `Detection confidence: ${(industryRisk.detectionConfidence * 100).toFixed(1)}%, Applicability: ${(industryRisk.applicabilityScore * 100).toFixed(1)}%`
+  }));
+}
+
+// Industry-aware merging that considers industry context
+function performIndustryAwareMerging(
+  templateRisks: Risk[],
+  industryRisks: Risk[],
+  generalRisks: Risk[],
+  industryAnalysis: any
+): { finalRisks: Risk[]; debugData: any; consolidationDecisions: any[] } {
+  console.log('=== INDUSTRY-AWARE MERGING START ===');
+  console.log(`Template risks: ${templateRisks.length}`);
+  console.log(`Industry risks: ${industryRisks.length}`);
+  console.log(`General AI risks: ${generalRisks.length}`);
+  
+  const consolidationDecisions: any[] = [];
+  
+  // Start with template risks (highest priority)
+  let mergedRisks: Risk[] = [...templateRisks];
+  let nextId = Math.max(...templateRisks.map(r => r.id), 0) + 1;
+  
+  // Add industry risks that don't conflict with template risks
+  for (const industryRisk of industryRisks) {
+    const conflict = findConflictingRisk(industryRisk, mergedRisks);
+    
+    if (!conflict) {
+      industryRisk.id = nextId++;
+      mergedRisks.push(industryRisk);
+      consolidationDecisions.push({
+        decision: 'Added industry risk',
+        reason: 'No conflict with existing risks',
+        affectedRisks: [industryRisk.id]
+      });
+    } else {
+      // Industry risk conflicts with existing risk - enhance existing risk
+      const enhancedRisk = enhanceRiskWithIndustryInsight(conflict, industryRisk);
+      const index = mergedRisks.findIndex(r => r.id === conflict.id);
+      if (index !== -1) {
+        mergedRisks[index] = enhancedRisk;
+        consolidationDecisions.push({
+          decision: 'Enhanced existing risk with industry insight',
+          reason: `Industry risk "${industryRisk.title}" merged with "${conflict.title}"`,
+          affectedRisks: [conflict.id]
+        });
+      }
+    }
+  }
+  
+  // Add general AI risks using existing deduplication logic
+  const generalMergeResult = mergeAnalysisResults(mergedRisks, generalRisks);
+  mergedRisks = generalMergeResult.finalRisks;
+  
+  console.log(`Final merged risks: ${mergedRisks.length}`);
+  
+  return {
+    finalRisks: mergedRisks,
+    consolidationDecisions,
+    debugData: {
+      ...generalMergeResult.debugData,
+      industryAnalysis,
+      consolidationDecisions
+    }
+  };
+}
+
+// Find if an industry risk conflicts with existing risks
+function findConflictingRisk(industryRisk: Risk, existingRisks: Risk[]): Risk | null {
+  for (const existingRisk of existingRisks) {
+    // Check for category and title similarity
+    if (existingRisk.category.toLowerCase() === industryRisk.category.toLowerCase()) {
+      const titleSimilarity = calculateTextSimilarity(existingRisk.title, industryRisk.title);
+      if (titleSimilarity > 0.6) {
+        return existingRisk;
+      }
+    }
+  }
+  return null;
+}
+
+// Enhance existing risk with industry insights
+function enhanceRiskWithIndustryInsight(existingRisk: Risk, industryRisk: Risk): Risk {
+  return {
+    ...existingRisk,
+    description: `${existingRisk.description} Industry Context: ${industryRisk.description}`,
+    recommendation: existingRisk.recommendation.includes(industryRisk.recommendation) 
+      ? existingRisk.recommendation 
+      : `${existingRisk.recommendation} Industry-specific recommendation: ${industryRisk.recommendation}`,
+    source: 'hybrid' as const,
+    relatedText: existingRisk.relatedText 
+      ? `${existingRisk.relatedText} | Industry insight: ${industryRisk.relatedText}`
+      : industryRisk.relatedText
+  };
 }

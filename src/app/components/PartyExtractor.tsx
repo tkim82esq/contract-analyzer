@@ -170,7 +170,7 @@ export default function PartyExtractor({
                   <select
                     value={partyMappings[role] || ""}
                     onChange={(e) => handlePartyMapping(role, e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                   >
                     <option value="">Select {role}...</option>
                     {extractedParties.map((party, idx) => (
@@ -187,7 +187,7 @@ export default function PartyExtractor({
                     <input
                       type="text"
                       placeholder={`Enter ${role} name`}
-                      className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900 placeholder-gray-500"
                       onChange={(e) => handlePartyMapping(role, e.target.value)}
                     />
                   )}
@@ -257,7 +257,7 @@ export default function PartyExtractor({
                     value={partyMappings[role] || ""}
                     onChange={(e) => handlePartyMapping(role, e.target.value)}
                     placeholder={`e.g., ${role === "Employer" ? "ABC Corporation" : role === "Employee" ? "John Smith" : `${role} Name`}`}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900 placeholder-gray-500"
                   />
                 </div>
               ))}
